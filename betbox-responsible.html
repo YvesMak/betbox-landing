@@ -1,0 +1,465 @@
+<!DOCTYPE html>
+<html lang="fr" data-lang="fr">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+  <title>Jeu responsable — BetBox</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet"/>
+  <style>
+/* ── TOKENS ── */
+:root {
+  --yellow:#f9c606; --yellow-hover:#e6b400; --yellow-dim:rgba(249,198,6,.12);
+  --green:#3e8e60; --green-dark:#2f6a48; --green-mid:rgba(62,142,96,.14);
+  --black:#0d0d0d; --black-mid:#111; --black-soft:#161616; --black-card:#1a1a1a; --black-border:#222;
+  --white:#fff; --surface:#f5f5f4; --border:#e4e3df;
+  --text-primary:#0d0d0d; --text-sub:#5c5c5c; --text-muted:#999;
+  --font:'Inter',system-ui,-apple-system,sans-serif;
+  --r-sm:4px; --r-md:8px; --r-lg:12px; --r-xl:16px; --r-full:9999px;
+  --ease:cubic-bezier(.2,0,0,1);
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{font-family:var(--font);color:var(--text-primary);background:var(--white);-webkit-font-smoothing:antialiased;overflow-x:hidden}
+a{text-decoration:none;color:inherit}
+button{font-family:var(--font);cursor:pointer;border:none;background:none}
+ul{list-style:none}
+
+/* ── LAYOUT ── */
+.container{max-width:900px;margin:0 auto;padding:0 24px}
+.container-wide{max-width:1200px;margin:0 auto;padding:0 24px}
+
+/* ── BUTTONS ── */
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;padding:12px 22px;border-radius:var(--r-md);font-size:14px;font-weight:700;letter-spacing:-.02em;transition:all 180ms var(--ease);cursor:pointer;white-space:nowrap;line-height:1}
+.btn:hover{transform:translateY(-1px)}
+.btn:active{transform:translateY(0) scale(.98)}
+.btn-primary{background:var(--yellow);color:var(--black)}
+.btn-primary:hover{background:var(--yellow-hover);box-shadow:0 8px 28px rgba(249,198,6,.45)}
+.btn-green{background:var(--green);color:var(--white)}
+.btn-green:hover{background:var(--green-dark);box-shadow:0 8px 24px rgba(62,142,96,.35)}
+.btn-outline-white{background:transparent;color:var(--white);border:1.5px solid rgba(255,255,255,.3)}
+.btn-outline-white:hover{background:rgba(255,255,255,.08);border-color:rgba(255,255,255,.6)}
+.btn-sm{padding:8px 16px;font-size:12px;border-radius:var(--r-sm)}
+
+/* ── LANG SWITCHER ── */
+.lang-switcher{display:flex;align-items:center;gap:2px;background:rgba(255,255,255,.07);border-radius:var(--r-sm);padding:3px;margin-left:12px;flex-shrink:0}
+.lang-btn{padding:4px 10px;border-radius:4px;font-size:11px;font-weight:700;letter-spacing:.04em;color:rgba(255,255,255,.45);cursor:pointer;transition:all 150ms;line-height:1;background:transparent;border:none;font-family:var(--font)}
+.lang-btn.active{background:var(--green);color:var(--white)}
+.lang-btn:hover:not(.active){color:var(--white)}
+
+/* ── NAVBAR ── */
+.navbar{position:sticky;top:0;z-index:300;background:rgba(13,13,13,.95);backdrop-filter:blur(16px) saturate(1.3);-webkit-backdrop-filter:blur(16px) saturate(1.3);border-bottom:1px solid rgba(255,255,255,.06);transition:box-shadow 200ms var(--ease)}
+.navbar.scrolled{box-shadow:0 4px 32px rgba(0,0,0,.5),0 1px 0 rgba(62,142,96,.12)}
+.navbar-inner{display:flex;align-items:center;height:64px;gap:32px}
+.nav-logo{display:flex;align-items:center;flex-shrink:0;transition:opacity 150ms;line-height:1}
+.nav-logo:hover{opacity:.85}
+.nav-links{display:flex;align-items:center;gap:2px;flex:1}
+.nav-link{padding:7px 14px;border-radius:var(--r-md);font-size:14px;font-weight:500;color:rgba(255,255,255,.75);transition:all 150ms var(--ease)}
+.nav-link:hover{color:var(--white);background:rgba(255,255,255,.1)}
+.nav-actions{display:flex;align-items:center;gap:8px;margin-left:auto}
+.burger-btn{display:none;flex-direction:column;justify-content:center;align-items:center;gap:5px;width:40px;height:40px;border-radius:var(--r-md);margin-left:auto;transition:background 150ms}
+.burger-btn:hover{background:rgba(255,255,255,.12)}
+.burger-line{width:20px;height:2px;background:var(--white);border-radius:2px;transition:all 250ms var(--ease);transform-origin:center}
+.burger-btn.open .burger-line:nth-child(1){transform:translateY(7px) rotate(45deg)}
+.burger-btn.open .burger-line:nth-child(2){opacity:0;transform:scaleX(0)}
+.burger-btn.open .burger-line:nth-child(3){transform:translateY(-7px) rotate(-45deg)}
+
+/* ── MOBILE DRAWER ── */
+.drawer-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:399;backdrop-filter:blur(4px)}
+.drawer-overlay.open{display:block}
+.drawer{position:fixed;top:0;right:0;bottom:0;width:min(300px,85vw);background:var(--white);z-index:400;transform:translateX(100%);transition:transform 300ms var(--ease);display:flex;flex-direction:column;overflow-y:auto}
+.drawer.open{transform:translateX(0)}
+.drawer-header{display:flex;align-items:center;justify-content:space-between;padding:20px;border-bottom:1px solid var(--border);flex-shrink:0}
+.drawer-close{width:32px;height:32px;display:flex;align-items:center;justify-content:center;border-radius:var(--r-md);color:var(--text-sub);font-size:18px;transition:all 150ms}
+.drawer-close:hover{background:var(--surface);color:var(--text-primary)}
+.drawer-nav{padding:16px;display:flex;flex-direction:column;gap:4px;flex:1}
+.drawer-nav-link{display:flex;align-items:center;gap:12px;padding:12px 14px;border-radius:var(--r-lg);font-size:15px;font-weight:500;color:var(--text-primary);transition:all 150ms}
+.drawer-nav-link:hover{background:var(--surface)}
+.link-icon{font-size:18px;width:24px;text-align:center}
+.drawer-footer{padding:16px;border-top:1px solid var(--border);display:flex;flex-direction:column;gap:8px;flex-shrink:0}
+
+/* ── PAGE HERO ── */
+.page-hero{background:var(--black);padding:72px 0 56px;position:relative;overflow:hidden}
+.page-hero::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse 60% 80% at 50% 0%,rgba(62,142,96,.18) 0%,transparent 70%);pointer-events:none}
+.page-hero-eyebrow{font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--green);margin-bottom:12px}
+.page-hero-title{font-size:clamp(28px,5vw,48px);font-weight:900;color:var(--white);line-height:1.1;letter-spacing:-.03em;margin-bottom:16px}
+.page-hero-desc{font-size:16px;color:rgba(255,255,255,.55);line-height:1.65;max-width:560px}
+.breadcrumb{display:flex;align-items:center;gap:8px;margin-bottom:24px;font-size:12px;font-weight:500;color:rgba(255,255,255,.35)}
+.breadcrumb a{color:rgba(255,255,255,.5);transition:color 150ms}
+.breadcrumb a:hover{color:var(--white)}
+.breadcrumb-sep{opacity:.3}
+
+/* ── CONTENT ── */
+.page-content{padding:64px 0 96px;background:var(--white)}
+.content-section{margin-bottom:48px}
+.content-section:last-child{margin-bottom:0}
+.content-h2{font-size:22px;font-weight:800;color:var(--black);letter-spacing:-.02em;margin-bottom:16px;padding-bottom:12px;border-bottom:2px solid var(--border);position:relative}
+.content-h2::after{content:'';position:absolute;bottom:-2px;left:0;width:40px;height:2px;background:var(--green)}
+.content-h3{font-size:16px;font-weight:700;color:var(--black);letter-spacing:-.01em;margin:20px 0 8px}
+.content-p{font-size:15px;line-height:1.75;color:var(--text-sub);margin-bottom:12px}
+.content-p:last-child{margin-bottom:0}
+.content-ul{margin:12px 0 16px 0;display:flex;flex-direction:column;gap:8px}
+.content-ul li{display:flex;align-items:flex-start;gap:10px;font-size:15px;line-height:1.65;color:var(--text-sub)}
+.content-ul li::before{content:'▸';color:var(--green);font-size:11px;margin-top:5px;flex-shrink:0}
+.info-box{background:var(--green-mid);border:1px solid rgba(62,142,96,.25);border-radius:var(--r-xl);padding:20px 24px;margin:20px 0}
+.info-box p{font-size:14px;line-height:1.7;color:var(--black)}
+.warn-box{background:rgba(249,198,6,.08);border:1px solid rgba(249,198,6,.3);border-radius:var(--r-xl);padding:20px 24px;margin:20px 0}
+.warn-box p{font-size:14px;line-height:1.7;color:var(--black)}
+.meta-note{font-size:12px;color:var(--text-muted);border-top:1px solid var(--border);margin-top:48px;padding-top:16px}
+
+/* ── FOOTER ── */
+.footer{background:var(--black);color:var(--white);padding:56px 0 0}
+.footer-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:32px;padding-bottom:40px;border-bottom:1px solid rgba(255,255,255,.08)}
+.footer-brand{grid-column:1/2}
+.footer-tagline{font-size:13px;color:rgba(255,255,255,.45);line-height:1.65;margin-top:14px;max-width:220px}
+.footer-col-title{font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:rgba(255,255,255,.3);margin-bottom:14px}
+.footer-links{display:flex;flex-direction:column;gap:10px}
+.footer-link{font-size:13px;color:rgba(255,255,255,.55);transition:color 150ms}
+.footer-link:hover{color:var(--white)}
+.footer-bottom{display:flex;align-items:center;justify-content:space-between;padding:20px 0;gap:16px;flex-wrap:wrap}
+.footer-copy{font-size:12px;color:rgba(255,255,255,.25)}
+.footer-bottom-links{display:flex;gap:16px}
+.footer-legal-note{font-size:11px;color:rgba(255,255,255,.2);line-height:1.6;padding:16px 0;border-top:1px solid rgba(255,255,255,.05);margin-top:4px}
+
+/* ── RESPONSIBLE GAMBLING SPECIFIC ── */
+.rg-cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:16px;margin:24px 0}
+.rg-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--r-xl);padding:20px;transition:all 200ms}
+.rg-card:hover{border-color:var(--green);box-shadow:0 4px 20px var(--green-mid)}
+.rg-card-icon{font-size:28px;margin-bottom:10px}
+.rg-card-title{font-size:14px;font-weight:700;color:var(--black);margin-bottom:6px}
+.rg-card-desc{font-size:13px;color:var(--text-sub);line-height:1.6}
+.hotline-box{background:var(--black);border-radius:var(--r-xl);padding:24px;display:flex;align-items:center;gap:20px;margin:24px 0}
+.hotline-icon{font-size:32px;flex-shrink:0}
+.hotline-title{font-size:16px;font-weight:800;color:var(--white);margin-bottom:4px}
+.hotline-sub{font-size:13px;color:rgba(255,255,255,.5)}
+.hotline-num{font-size:22px;font-weight:900;color:var(--yellow);letter-spacing:.02em}
+
+/* ── ABOUT SPECIFIC ── */
+.team-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:16px;margin:24px 0}
+.team-card{background:var(--surface);border-radius:var(--r-xl);padding:20px;text-align:center}
+.team-avatar{width:56px;height:56px;border-radius:var(--r-full);background:var(--green-mid);display:flex;align-items:center;justify-content:center;font-size:22px;margin:0 auto 12px}
+.team-name{font-size:14px;font-weight:700;color:var(--black)}
+.team-role{font-size:12px;color:var(--text-muted);margin-top:3px}
+.stat-row{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin:24px 0;background:var(--black);border-radius:var(--r-xl);padding:24px}
+.stat-item{text-align:center}
+.stat-val{font-size:28px;font-weight:900;color:var(--yellow);letter-spacing:-.03em}
+.stat-lbl{font-size:12px;color:rgba(255,255,255,.45);margin-top:4px}
+
+/* ── RESPONSIVE ── */
+@media(max-width:768px){
+  .nav-links,.nav-actions{display:none}
+  .burger-btn{display:flex}
+  .footer-grid{grid-template-columns:1fr 1fr}
+  .footer-brand{grid-column:1/-1}
+  .stat-row{grid-template-columns:1fr}
+  .team-grid{grid-template-columns:repeat(2,1fr)}
+}
+@media(max-width:480px){
+  .footer-grid{grid-template-columns:1fr}
+  .footer-bottom{flex-direction:column;align-items:flex-start}
+}
+</style>
+</head>
+<body>
+
+<nav class="navbar" id="navbar" role="navigation" aria-label="Navigation principale">
+  <div class="container-wide navbar-inner">
+    <a href="betbox-landing.html" class="nav-logo" aria-label="BetBox — Accueil">
+      <svg width="108" height="28" viewBox="0 0 108 28" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <rect x="0" y="0" width="26" height="28" rx="5" fill="#f9c606"/>
+  <text x="13" y="20" font-family="Inter,sans-serif" font-size="15" font-weight="900" fill="#0d0d0d" text-anchor="middle">BB</text>
+  <text x="64" y="20" font-family="Inter,sans-serif" font-size="17" font-weight="800" fill="#ffffff" text-anchor="middle" letter-spacing="-0.5">BetBox</text>
+</svg>
+    </a>
+    <ul class="nav-links" role="list">
+      <li><a href="betbox-landing.html#sports"  class="nav-link" data-i18n="nav.sports">Sports</a></li>
+      <li><a href="betbox-landing.html#comment" class="nav-link" data-i18n="nav.how">Comment ça marche</a></li>
+      <li><a href="betbox-landing.html#bonus"   class="nav-link" data-i18n="nav.offers">Offres</a></li>
+      <li><a href="betbox-landing.html#avis"    class="nav-link" data-i18n="nav.reviews">Avis</a></li>
+    </ul>
+    <div class="nav-actions">
+      <button class="btn btn-outline-white btn-sm" data-i18n="nav.login">Se connecter</button>
+      <button class="btn btn-primary btn-sm" data-i18n="nav.signup">S'inscrire</button>
+      <div class="lang-switcher" role="group" aria-label="Langue">
+        <button class="lang-btn active" id="btnFR" onclick="setLang('fr')" aria-pressed="true">FR</button>
+        <button class="lang-btn"        id="btnEN" onclick="setLang('en')" aria-pressed="false">EN</button>
+      </div>
+    </div>
+    <button class="burger-btn" id="burgerBtn" aria-label="Menu" aria-expanded="false" aria-controls="mobileDrawer">
+      <span class="burger-line"></span><span class="burger-line"></span><span class="burger-line"></span>
+    </button>
+  </div>
+</nav>
+<div class="drawer-overlay" id="drawerOverlay" aria-hidden="true"></div>
+<div class="drawer" id="mobileDrawer" role="dialog" aria-modal="true" aria-label="Menu navigation">
+  <div class="drawer-header">
+    <a href="betbox-landing.html" class="nav-logo"><svg width="108" height="28" viewBox="0 0 108 28" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <rect x="0" y="0" width="26" height="28" rx="5" fill="#f9c606"/>
+  <text x="13" y="20" font-family="Inter,sans-serif" font-size="15" font-weight="900" fill="#0d0d0d" text-anchor="middle">BB</text>
+  <text x="64" y="20" font-family="Inter,sans-serif" font-size="17" font-weight="800" fill="#ffffff" text-anchor="middle" letter-spacing="-0.5">BetBox</text>
+</svg></a>
+    <button class="drawer-close" id="drawerClose" aria-label="Fermer">&times;</button>
+  </div>
+  <nav class="drawer-nav">
+    <a href="betbox-landing.html#sports"  class="drawer-nav-link"><span class="link-icon">⚽</span><span data-i18n="nav.sports">Sports</span></a>
+    <a href="betbox-landing.html#comment" class="drawer-nav-link"><span class="link-icon">💡</span><span data-i18n="nav.how">Comment ça marche</span></a>
+    <a href="betbox-landing.html#bonus"   class="drawer-nav-link"><span class="link-icon">🎁</span><span data-i18n="nav.offersBonus">Offres &amp; Bonus</span></a>
+    <a href="betbox-landing.html#avis"    class="drawer-nav-link"><span class="link-icon">⭐</span><span data-i18n="nav.customerReviews">Avis clients</span></a>
+  </nav>
+  <div class="drawer-footer">
+    <button class="btn btn-outline" style="border:1px solid var(--border);color:var(--text-sub);" data-i18n="nav.login">Se connecter</button>
+    <button class="btn btn-green" data-i18n="cta.createAccount">Créer mon compte</button>
+    <div class="lang-switcher" style="justify-content:center;background:var(--surface);margin-left:0">
+      <button class="lang-btn" id="btnFR2" style="color:var(--text-sub)" onclick="setLang('fr')">FR</button>
+      <button class="lang-btn" id="btnEN2" style="color:var(--text-sub)" onclick="setLang('en')">EN</button>
+    </div>
+  </div>
+</div>
+
+<section class="page-hero">
+  <div class="container">
+    <div class="breadcrumb">
+      <a href="betbox-landing.html" data-i18n="breadcrumb.home">Accueil</a>
+      <span class="breadcrumb-sep">/</span>
+      <span data-i18n="footer.responsible">Jeu responsable</span>
+    </div>
+    <p class="page-hero-eyebrow" data-i18n="rg.eyebrow">Votre bien-être d'abord</p>
+    <h1 class="page-hero-title" data-i18n="rg.title">Jeu responsable</h1>
+    <p class="page-hero-desc" data-i18n="rg.desc">Chez BetBox, nous croyons que les paris sportifs doivent rester un loisir agréable. Nous mettons à votre disposition des outils pour garder le contrôle.</p>
+  </div>
+</section>
+
+<main class="page-content">
+  <div class="container">
+
+    <div class="warn-box">
+      <p data-i18n="rg.warn">⚠️ <strong>Rappel important :</strong> Les jeux d'argent comportent des risques. Ne pariez que ce que vous pouvez vous permettre de perdre. L'accès à la plateforme est strictement interdit aux moins de 18 ans.</p>
+    </div>
+
+    <div class="content-section">
+      <h2 class="content-h2" data-i18n="rg.s1.title">Outils de contrôle disponibles</h2>
+      <p class="content-p" data-i18n="rg.s1.p">Depuis votre espace personnel, vous pouvez à tout moment activer les outils suivants :</p>
+      <div class="rg-cards">
+        <div class="rg-card">
+          <div class="rg-card-icon">💰</div>
+          <div class="rg-card-title" data-i18n="rg.tool1.title">Limite de dépôt</div>
+          <div class="rg-card-desc" data-i18n="rg.tool1.desc">Fixez un plafond de dépôt journalier, hebdomadaire ou mensuel. La limite est activée immédiatement.</div>
+        </div>
+        <div class="rg-card">
+          <div class="rg-card-icon">⏸️</div>
+          <div class="rg-card-title" data-i18n="rg.tool2.title">Pause de jeu</div>
+          <div class="rg-card-desc" data-i18n="rg.tool2.desc">Suspendez votre compte pendant 24h, 7 jours ou 30 jours. Aucun accès possible durant la période choisie.</div>
+        </div>
+        <div class="rg-card">
+          <div class="rg-card-icon">🚫</div>
+          <div class="rg-card-title" data-i18n="rg.tool3.title">Auto-exclusion</div>
+          <div class="rg-card-desc" data-i18n="rg.tool3.desc">Fermez définitivement votre compte. Cette action est irréversible pendant une période minimale de 6 mois.</div>
+        </div>
+        <div class="rg-card">
+          <div class="rg-card-icon">📊</div>
+          <div class="rg-card-title" data-i18n="rg.tool4.title">Historique des mises</div>
+          <div class="rg-card-desc" data-i18n="rg.tool4.desc">Consultez l'intégralité de vos paris et transactions pour garder une vue claire de votre activité.</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="content-section">
+      <h2 class="content-h2" data-i18n="rg.s2.title">Signes d'une pratique problématique</h2>
+      <p class="content-p" data-i18n="rg.s2.p">Il est important de reconnaître les signaux d'alerte d'une dépendance au jeu :</p>
+      <ul class="content-ul">
+        <li data-i18n="rg.s2.li1">Parier avec de l'argent destiné à des besoins essentiels (loyer, nourriture, santé)</li>
+        <li data-i18n="rg.s2.li2">Chercher à récupérer ses pertes en pariant davantage</li>
+        <li data-i18n="rg.s2.li3">Emprunter de l'argent pour financer ses paris</li>
+        <li data-i18n="rg.s2.li4">Ressentir de l'anxiété ou de l'irritabilité lorsqu'on ne joue pas</li>
+        <li data-i18n="rg.s2.li5">Mentir à ses proches sur ses habitudes de jeu</li>
+      </ul>
+    </div>
+
+    <div class="content-section">
+      <h2 class="content-h2" data-i18n="rg.s3.title">Aide &amp; ressources</h2>
+      <p class="content-p" data-i18n="rg.s3.p">Si vous pensez avoir un problème avec le jeu, n'hésitez pas à solliciter de l'aide. Des professionnels sont disponibles pour vous accompagner :</p>
+      <div class="hotline-box">
+        <div class="hotline-icon">📞</div>
+        <div>
+          <div class="hotline-title" data-i18n="rg.hotline.title">Ligne d'écoute confidentielle</div>
+          <div class="hotline-sub" data-i18n="rg.hotline.sub">Disponible 24h/24, 7j/7 — Gratuit et confidentiel</div>
+          <div class="hotline-num" data-i18n="rg.hotline.num">+237 800 XXX XXX</div>
+        </div>
+      </div>
+      <ul class="content-ul">
+        <li data-i18n="rg.s3.li1">Contactez notre support BetBox : support@betbox.cm</li>
+        <li data-i18n="rg.s3.li2">Parlez à un professionnel de santé ou à un travailleur social</li>
+        <li data-i18n="rg.s3.li3">Faites confiance à vos proches et parlez-leur de votre situation</li>
+      </ul>
+    </div>
+
+    <div class="content-section">
+      <h2 class="content-h2" data-i18n="rg.s4.title">Protection des mineurs</h2>
+      <p class="content-p" data-i18n="rg.s4.p1">BetBox est formellement interdit aux personnes de moins de 18 ans. Nous procédons à des vérifications d'âge lors de l'inscription et nous nous réservons le droit de demander des justificatifs à tout moment.</p>
+      <p class="content-p" data-i18n="rg.s4.p2">Si vous partagez votre appareil avec des mineurs, nous vous recommandons vivement de protéger votre compte avec un mot de passe robuste et d'activer les contrôles parentaux de votre appareil.</p>
+    </div>
+
+    <p class="meta-note" data-i18n="meta.updated">Dernière mise à jour : janvier 2026</p>
+  </div>
+</main>
+
+<footer class="footer">
+  <div class="container-wide">
+    <div class="footer-grid">
+      <div class="footer-brand">
+        <a href="betbox-landing.html" class="nav-logo"><svg width="108" height="28" viewBox="0 0 108 28" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <rect x="0" y="0" width="26" height="28" rx="5" fill="#f9c606"/>
+  <text x="13" y="20" font-family="Inter,sans-serif" font-size="15" font-weight="900" fill="#0d0d0d" text-anchor="middle">BB</text>
+  <text x="64" y="20" font-family="Inter,sans-serif" font-size="17" font-weight="800" fill="#ffffff" text-anchor="middle" letter-spacing="-0.5">BetBox</text>
+</svg></a>
+        <p class="footer-tagline" data-i18n="footer.tagline">La plateforme de paris sportifs pensée pour l'Afrique. Simple, sécurisée et adaptée à vos usages.</p>
+      </div>
+      <div>
+        <div class="footer-col-title" data-i18n="footer.nav">Navigation</div>
+        <ul class="footer-links">
+          <li><a href="betbox-landing.html#sports"  class="footer-link" data-i18n="nav.sports">Sports</a></li>
+          <li><a href="betbox-landing.html#comment" class="footer-link" data-i18n="nav.how">Comment ça marche</a></li>
+          <li><a href="betbox-landing.html#bonus"   class="footer-link" data-i18n="nav.offers">Offres</a></li>
+          <li><a href="betbox-landing.html#avis"    class="footer-link" data-i18n="nav.reviews">Avis</a></li>
+        </ul>
+      </div>
+      <div>
+        <div class="footer-col-title" data-i18n="footer.info">Informations</div>
+        <ul class="footer-links">
+          <li><a href="betbox-about.html"       class="footer-link" data-i18n="footer.about">À propos</a></li>
+          <li><a href="betbox-responsible.html" class="footer-link" data-i18n="footer.responsible">Jeu responsable</a></li>
+          <li><a href="betbox-privacy.html"     class="footer-link" data-i18n="footer.privacy">Confidentialité</a></li>
+          <li><a href="betbox-cgu.html"         class="footer-link" data-i18n="footer.terms">Conditions générales</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <span class="footer-copy" data-i18n-html="footer.copy">&copy; 2026 BetBox &mdash; Tous droits réservés</span>
+      <div class="footer-bottom-links">
+        <a href="betbox-privacy.html" class="footer-link" data-i18n="footer.privacyPolicy">Politique de confidentialité</a>
+        <a href="betbox-cgu.html"     class="footer-link" data-i18n="footer.cgu">CGU</a>
+      </div>
+    </div>
+    <p class="footer-legal-note" data-i18n="footer.legal">Les jeux d'argent comportent des risques : endettement, isolement, dépendance. Ne jouez que ce que vous pouvez vous permettre de perdre. Interdit aux moins de 18 ans.</p>
+  </div>
+</footer>
+
+<script>
+// Navbar scroll
+const navbar = document.getElementById('navbar');
+window.addEventListener('scroll', () => { navbar.classList.toggle('scrolled', window.scrollY > 8); }, { passive: true });
+
+// Mobile Drawer
+const burger  = document.getElementById('burgerBtn');
+const drawer  = document.getElementById('mobileDrawer');
+const overlay = document.getElementById('drawerOverlay');
+const close   = document.getElementById('drawerClose');
+function openDrawer() { drawer.classList.add('open'); overlay.classList.add('open'); burger.classList.add('open'); burger.setAttribute('aria-expanded','true'); document.body.style.overflow='hidden'; }
+function closeDrawer(){ drawer.classList.remove('open'); overlay.classList.remove('open'); burger.classList.remove('open'); burger.setAttribute('aria-expanded','false'); document.body.style.overflow=''; }
+burger.addEventListener('click', () => drawer.classList.contains('open') ? closeDrawer() : openDrawer());
+close.addEventListener('click', closeDrawer);
+overlay.addEventListener('click', closeDrawer);
+document.addEventListener('keydown', e => { if (e.key === 'Escape' && drawer.classList.contains('open')) closeDrawer(); });
+drawer.querySelectorAll('.drawer-nav-link').forEach(l => l.addEventListener('click', closeDrawer));
+</script>
+<script>
+const T = {
+  fr: {
+    "nav.sports":"Sports","nav.how":"Comment ça marche","nav.offers":"Offres","nav.reviews":"Avis",
+    "nav.offersBonus":"Offres &amp; Bonus","nav.customerReviews":"Avis clients",
+    "nav.login":"Se connecter","nav.signup":"S'inscrire",
+    "cta.createAccount":"Créer mon compte",
+    "footer.tagline":"La plateforme de paris sportifs pensée pour l’Afrique. Simple, sécurisée et adaptée à vos usages.",
+    "footer.nav":"Navigation","footer.info":"Informations","footer.about":"À propos",
+    "footer.responsible":"Jeu responsable","footer.privacy":"Confidentialité","footer.terms":"Conditions générales",
+    "footer.copy":"&copy; 2026 BetBox &mdash; Tous droits réservés",
+    "footer.privacyPolicy":"Politique de confidentialité","footer.cgu":"CGU",
+    "footer.legal":"Les jeux d’argent comportent des risques : endettement, isolement, dépendance. Ne jouez que ce que vous pouvez vous permettre de perdre. Interdit aux moins de 18 ans.",
+
+    "breadcrumb.home":"Accueil",
+    "rg.eyebrow":"Votre bien-être d’abord",
+    "rg.title":"Jeu responsable",
+    "rg.desc":"Chez BetBox, nous croyons que les paris sportifs doivent rester un loisir agréable. Nous mettons à votre disposition des outils pour garder le contrôle.",
+    "rg.warn":"⚠️ <strong>Rappel important :</strong> Les jeux d’argent comportent des risques. Ne pariez que ce que vous pouvez vous permettre de perdre. L’accès à la plateforme est strictement interdit aux moins de 18 ans.",
+    "rg.s1.title":"Outils de contrôle disponibles",
+    "rg.s1.p":"Depuis votre espace personnel, vous pouvez à tout moment activer les outils suivants :",
+    "rg.tool1.title":"Limite de dépôt","rg.tool1.desc":"Fixez un plafond de dépôt journalier, hebdomadaire ou mensuel. La limite est activée immédiatement.",
+    "rg.tool2.title":"Pause de jeu","rg.tool2.desc":"Suspendez votre compte pendant 24h, 7 jours ou 30 jours. Aucun accès possible durant la période choisie.",
+    "rg.tool3.title":"Auto-exclusion","rg.tool3.desc":"Fermez définitivement votre compte. Cette action est irréversible pendant une période minimale de 6 mois.",
+    "rg.tool4.title":"Historique des mises","rg.tool4.desc":"Consultez l’intégralité de vos paris et transactions pour garder une vue claire de votre activité.",
+    "rg.s2.title":"Signes d’une pratique problématique",
+    "rg.s2.p":"Il est important de reconnaître les signaux d’alerte d’une dépendance au jeu :",
+    "rg.s2.li1":"Parier avec de l’argent destiné à des besoins essentiels (loyer, nourriture, santé)",
+    "rg.s2.li2":"Chercher à récupérer ses pertes en pariant davantage",
+    "rg.s2.li3":"Emprunter de l’argent pour financer ses paris",
+    "rg.s2.li4":"Ressentir de l’anxiété ou de l’irritabilité lorsqu’on ne joue pas",
+    "rg.s2.li5":"Mentir à ses proches sur ses habitudes de jeu",
+    "rg.s3.title":"Aide &amp; ressources",
+    "rg.s3.p":"Si vous pensez avoir un problème avec le jeu, n’hésitez pas à solliciter de l’aide. Des professionnels sont disponibles pour vous accompagner :",
+    "rg.hotline.title":"Ligne d’écoute confidentielle","rg.hotline.sub":"Disponible 24h/24, 7j/7 — Gratuit et confidentiel","rg.hotline.num":"+237 800 XXX XXX",
+    "rg.s3.li1":"Contactez notre support BetBox : support@betbox.cm",
+    "rg.s3.li2":"Parlez à un professionnel de santé ou à un travailleur social",
+    "rg.s3.li3":"Faites confiance à vos proches et parlez-leur de votre situation",
+    "rg.s4.title":"Protection des mineurs",
+    "rg.s4.p1":"BetBox est formellement interdit aux personnes de moins de 18 ans. Nous procédons à des vérifications d’âge lors de l’inscription et nous nous réservons le droit de demander des justificatifs à tout moment.",
+    "rg.s4.p2":"Si vous partagez votre appareil avec des mineurs, nous vous recommandons vivement de protéger votre compte avec un mot de passe robuste et d’activer les contrôles parentaux de votre appareil.",
+    "meta.updated":"Dernière mise à jour : janvier 2026",
+},
+  en: {
+    "nav.sports":"Sports","nav.how":"How it works","nav.offers":"Offers","nav.reviews":"Reviews",
+    "nav.offersBonus":"Offers &amp; Bonus","nav.customerReviews":"Customer reviews",
+    "nav.login":"Log in","nav.signup":"Sign up",
+    "cta.createAccount":"Create my account",
+    "footer.tagline":"The sports betting platform built for Africa. Simple, secure and tailored to your needs.",
+    "footer.nav":"Navigation","footer.info":"Information","footer.about":"About us",
+    "footer.responsible":"Responsible gambling","footer.privacy":"Privacy","footer.terms":"Terms &amp; conditions",
+    "footer.copy":"&copy; 2026 BetBox &mdash; All rights reserved",
+    "footer.privacyPolicy":"Privacy policy","footer.cgu":"Terms of use",
+    "footer.legal":"Gambling involves risks: debt, isolation, addiction. Only gamble what you can afford to lose. 18+ only.",
+
+    "breadcrumb.home":"Home",
+    "rg.eyebrow":"Your wellbeing first",
+    "rg.title":"Responsible gambling",
+    "rg.desc":"At BetBox, we believe sports betting should remain an enjoyable pastime. We provide you with the tools to stay in control.",
+    "rg.warn":"⚠️ <strong>Important reminder:</strong> Gambling involves risks. Only bet what you can afford to lose. Access to the platform is strictly prohibited to persons under 18.",
+    "rg.s1.title":"Available control tools",
+    "rg.s1.p":"From your personal account, you can activate the following tools at any time:",
+    "rg.tool1.title":"Deposit limit","rg.tool1.desc":"Set a daily, weekly or monthly deposit cap. The limit is applied immediately.",
+    "rg.tool2.title":"Gaming break","rg.tool2.desc":"Suspend your account for 24 hours, 7 days or 30 days. No access is possible during the chosen period.",
+    "rg.tool3.title":"Self-exclusion","rg.tool3.desc":"Permanently close your account. This action is irreversible for a minimum period of 6 months.",
+    "rg.tool4.title":"Bet history","rg.tool4.desc":"View all your bets and transactions to maintain a clear picture of your activity.",
+    "rg.s2.title":"Signs of problematic gambling",
+    "rg.s2.p":"It is important to recognise the warning signs of gambling addiction:",
+    "rg.s2.li1":"Betting with money intended for essential needs (rent, food, health)",
+    "rg.s2.li2":"Chasing losses by betting more",
+    "rg.s2.li3":"Borrowing money to fund your bets",
+    "rg.s2.li4":"Feeling anxious or irritable when not gambling",
+    "rg.s2.li5":"Lying to loved ones about your gambling habits",
+    "rg.s3.title":"Help &amp; resources",
+    "rg.s3.p":"If you think you have a gambling problem, do not hesitate to seek help. Professionals are available to support you:",
+    "rg.hotline.title":"Confidential helpline","rg.hotline.sub":"Available 24/7 — Free and confidential","rg.hotline.num":"+237 800 XXX XXX",
+    "rg.s3.li1":"Contact BetBox support: support@betbox.cm",
+    "rg.s3.li2":"Speak to a health professional or social worker",
+    "rg.s3.li3":"Trust your loved ones and talk to them about your situation",
+    "rg.s4.title":"Protection of minors",
+    "rg.s4.p1":"BetBox is strictly prohibited for persons under 18. We carry out age verification at registration and reserve the right to request proof of age at any time.",
+    "rg.s4.p2":"If you share your device with minors, we strongly recommend protecting your account with a strong password and enabling parental controls on your device.",
+    "meta.updated":"Last updated: January 2026",
+}
+};
+function setLang(lang) {
+  document.documentElement.setAttribute('data-lang', lang);
+  document.documentElement.setAttribute('lang', lang);
+  ['btnFR','btnFR2'].forEach(id => { const b = document.getElementById(id); if(b) { b.classList.toggle('active', lang==='fr'); b.setAttribute('aria-pressed', lang==='fr'); } });
+  ['btnEN','btnEN2'].forEach(id => { const b = document.getElementById(id); if(b) { b.classList.toggle('active', lang==='en'); b.setAttribute('aria-pressed', lang==='en'); } });
+  const dict = T[lang];
+  document.querySelectorAll('[data-i18n-html]').forEach(el => { const k=el.getAttribute('data-i18n-html'); if(dict[k]!==undefined) el.innerHTML=dict[k]; });
+  document.querySelectorAll('[data-i18n]').forEach(el => { const k=el.getAttribute('data-i18n'); if(dict[k]!==undefined) el.innerHTML=dict[k]; });
+  if(lang==='fr') document.title="Jeu responsable — BetBox";
+  else document.title="Responsible Gambling — BetBox";
+  
+}
+</script>
+</body>
+</html>

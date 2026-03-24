@@ -1,0 +1,505 @@
+<!DOCTYPE html>
+<html lang="fr" data-lang="fr">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+  <title>Conditions générales — BetBox</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet"/>
+  <style>
+/* ── TOKENS ── */
+:root {
+  --yellow:#f9c606; --yellow-hover:#e6b400; --yellow-dim:rgba(249,198,6,.12);
+  --green:#3e8e60; --green-dark:#2f6a48; --green-mid:rgba(62,142,96,.14);
+  --black:#0d0d0d; --black-mid:#111; --black-soft:#161616; --black-card:#1a1a1a; --black-border:#222;
+  --white:#fff; --surface:#f5f5f4; --border:#e4e3df;
+  --text-primary:#0d0d0d; --text-sub:#5c5c5c; --text-muted:#999;
+  --font:'Inter',system-ui,-apple-system,sans-serif;
+  --r-sm:4px; --r-md:8px; --r-lg:12px; --r-xl:16px; --r-full:9999px;
+  --ease:cubic-bezier(.2,0,0,1);
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{font-family:var(--font);color:var(--text-primary);background:var(--white);-webkit-font-smoothing:antialiased;overflow-x:hidden}
+a{text-decoration:none;color:inherit}
+button{font-family:var(--font);cursor:pointer;border:none;background:none}
+ul{list-style:none}
+
+/* ── LAYOUT ── */
+.container{max-width:900px;margin:0 auto;padding:0 24px}
+.container-wide{max-width:1200px;margin:0 auto;padding:0 24px}
+
+/* ── BUTTONS ── */
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;padding:12px 22px;border-radius:var(--r-md);font-size:14px;font-weight:700;letter-spacing:-.02em;transition:all 180ms var(--ease);cursor:pointer;white-space:nowrap;line-height:1}
+.btn:hover{transform:translateY(-1px)}
+.btn:active{transform:translateY(0) scale(.98)}
+.btn-primary{background:var(--yellow);color:var(--black)}
+.btn-primary:hover{background:var(--yellow-hover);box-shadow:0 8px 28px rgba(249,198,6,.45)}
+.btn-green{background:var(--green);color:var(--white)}
+.btn-green:hover{background:var(--green-dark);box-shadow:0 8px 24px rgba(62,142,96,.35)}
+.btn-outline-white{background:transparent;color:var(--white);border:1.5px solid rgba(255,255,255,.3)}
+.btn-outline-white:hover{background:rgba(255,255,255,.08);border-color:rgba(255,255,255,.6)}
+.btn-sm{padding:8px 16px;font-size:12px;border-radius:var(--r-sm)}
+
+/* ── LANG SWITCHER ── */
+.lang-switcher{display:flex;align-items:center;gap:2px;background:rgba(255,255,255,.07);border-radius:var(--r-sm);padding:3px;margin-left:12px;flex-shrink:0}
+.lang-btn{padding:4px 10px;border-radius:4px;font-size:11px;font-weight:700;letter-spacing:.04em;color:rgba(255,255,255,.45);cursor:pointer;transition:all 150ms;line-height:1;background:transparent;border:none;font-family:var(--font)}
+.lang-btn.active{background:var(--green);color:var(--white)}
+.lang-btn:hover:not(.active){color:var(--white)}
+
+/* ── NAVBAR ── */
+.navbar{position:sticky;top:0;z-index:300;background:rgba(13,13,13,.95);backdrop-filter:blur(16px) saturate(1.3);-webkit-backdrop-filter:blur(16px) saturate(1.3);border-bottom:1px solid rgba(255,255,255,.06);transition:box-shadow 200ms var(--ease)}
+.navbar.scrolled{box-shadow:0 4px 32px rgba(0,0,0,.5),0 1px 0 rgba(62,142,96,.12)}
+.navbar-inner{display:flex;align-items:center;height:64px;gap:32px}
+.nav-logo{display:flex;align-items:center;flex-shrink:0;transition:opacity 150ms;line-height:1}
+.nav-logo:hover{opacity:.85}
+.nav-links{display:flex;align-items:center;gap:2px;flex:1}
+.nav-link{padding:7px 14px;border-radius:var(--r-md);font-size:14px;font-weight:500;color:rgba(255,255,255,.75);transition:all 150ms var(--ease)}
+.nav-link:hover{color:var(--white);background:rgba(255,255,255,.1)}
+.nav-actions{display:flex;align-items:center;gap:8px;margin-left:auto}
+.burger-btn{display:none;flex-direction:column;justify-content:center;align-items:center;gap:5px;width:40px;height:40px;border-radius:var(--r-md);margin-left:auto;transition:background 150ms}
+.burger-btn:hover{background:rgba(255,255,255,.12)}
+.burger-line{width:20px;height:2px;background:var(--white);border-radius:2px;transition:all 250ms var(--ease);transform-origin:center}
+.burger-btn.open .burger-line:nth-child(1){transform:translateY(7px) rotate(45deg)}
+.burger-btn.open .burger-line:nth-child(2){opacity:0;transform:scaleX(0)}
+.burger-btn.open .burger-line:nth-child(3){transform:translateY(-7px) rotate(-45deg)}
+
+/* ── MOBILE DRAWER ── */
+.drawer-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:399;backdrop-filter:blur(4px)}
+.drawer-overlay.open{display:block}
+.drawer{position:fixed;top:0;right:0;bottom:0;width:min(300px,85vw);background:var(--white);z-index:400;transform:translateX(100%);transition:transform 300ms var(--ease);display:flex;flex-direction:column;overflow-y:auto}
+.drawer.open{transform:translateX(0)}
+.drawer-header{display:flex;align-items:center;justify-content:space-between;padding:20px;border-bottom:1px solid var(--border);flex-shrink:0}
+.drawer-close{width:32px;height:32px;display:flex;align-items:center;justify-content:center;border-radius:var(--r-md);color:var(--text-sub);font-size:18px;transition:all 150ms}
+.drawer-close:hover{background:var(--surface);color:var(--text-primary)}
+.drawer-nav{padding:16px;display:flex;flex-direction:column;gap:4px;flex:1}
+.drawer-nav-link{display:flex;align-items:center;gap:12px;padding:12px 14px;border-radius:var(--r-lg);font-size:15px;font-weight:500;color:var(--text-primary);transition:all 150ms}
+.drawer-nav-link:hover{background:var(--surface)}
+.link-icon{font-size:18px;width:24px;text-align:center}
+.drawer-footer{padding:16px;border-top:1px solid var(--border);display:flex;flex-direction:column;gap:8px;flex-shrink:0}
+
+/* ── PAGE HERO ── */
+.page-hero{background:var(--black);padding:72px 0 56px;position:relative;overflow:hidden}
+.page-hero::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse 60% 80% at 50% 0%,rgba(62,142,96,.18) 0%,transparent 70%);pointer-events:none}
+.page-hero-eyebrow{font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--green);margin-bottom:12px}
+.page-hero-title{font-size:clamp(28px,5vw,48px);font-weight:900;color:var(--white);line-height:1.1;letter-spacing:-.03em;margin-bottom:16px}
+.page-hero-desc{font-size:16px;color:rgba(255,255,255,.55);line-height:1.65;max-width:560px}
+.breadcrumb{display:flex;align-items:center;gap:8px;margin-bottom:24px;font-size:12px;font-weight:500;color:rgba(255,255,255,.35)}
+.breadcrumb a{color:rgba(255,255,255,.5);transition:color 150ms}
+.breadcrumb a:hover{color:var(--white)}
+.breadcrumb-sep{opacity:.3}
+
+/* ── CONTENT ── */
+.page-content{padding:64px 0 96px;background:var(--white)}
+.content-section{margin-bottom:48px}
+.content-section:last-child{margin-bottom:0}
+.content-h2{font-size:22px;font-weight:800;color:var(--black);letter-spacing:-.02em;margin-bottom:16px;padding-bottom:12px;border-bottom:2px solid var(--border);position:relative}
+.content-h2::after{content:'';position:absolute;bottom:-2px;left:0;width:40px;height:2px;background:var(--green)}
+.content-h3{font-size:16px;font-weight:700;color:var(--black);letter-spacing:-.01em;margin:20px 0 8px}
+.content-p{font-size:15px;line-height:1.75;color:var(--text-sub);margin-bottom:12px}
+.content-p:last-child{margin-bottom:0}
+.content-ul{margin:12px 0 16px 0;display:flex;flex-direction:column;gap:8px}
+.content-ul li{display:flex;align-items:flex-start;gap:10px;font-size:15px;line-height:1.65;color:var(--text-sub)}
+.content-ul li::before{content:'▸';color:var(--green);font-size:11px;margin-top:5px;flex-shrink:0}
+.info-box{background:var(--green-mid);border:1px solid rgba(62,142,96,.25);border-radius:var(--r-xl);padding:20px 24px;margin:20px 0}
+.info-box p{font-size:14px;line-height:1.7;color:var(--black)}
+.warn-box{background:rgba(249,198,6,.08);border:1px solid rgba(249,198,6,.3);border-radius:var(--r-xl);padding:20px 24px;margin:20px 0}
+.warn-box p{font-size:14px;line-height:1.7;color:var(--black)}
+.meta-note{font-size:12px;color:var(--text-muted);border-top:1px solid var(--border);margin-top:48px;padding-top:16px}
+
+/* ── FOOTER ── */
+.footer{background:var(--black);color:var(--white);padding:56px 0 0}
+.footer-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:32px;padding-bottom:40px;border-bottom:1px solid rgba(255,255,255,.08)}
+.footer-brand{grid-column:1/2}
+.footer-tagline{font-size:13px;color:rgba(255,255,255,.45);line-height:1.65;margin-top:14px;max-width:220px}
+.footer-col-title{font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:rgba(255,255,255,.3);margin-bottom:14px}
+.footer-links{display:flex;flex-direction:column;gap:10px}
+.footer-link{font-size:13px;color:rgba(255,255,255,.55);transition:color 150ms}
+.footer-link:hover{color:var(--white)}
+.footer-bottom{display:flex;align-items:center;justify-content:space-between;padding:20px 0;gap:16px;flex-wrap:wrap}
+.footer-copy{font-size:12px;color:rgba(255,255,255,.25)}
+.footer-bottom-links{display:flex;gap:16px}
+.footer-legal-note{font-size:11px;color:rgba(255,255,255,.2);line-height:1.6;padding:16px 0;border-top:1px solid rgba(255,255,255,.05);margin-top:4px}
+
+/* ── RESPONSIBLE GAMBLING SPECIFIC ── */
+.rg-cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:16px;margin:24px 0}
+.rg-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--r-xl);padding:20px;transition:all 200ms}
+.rg-card:hover{border-color:var(--green);box-shadow:0 4px 20px var(--green-mid)}
+.rg-card-icon{font-size:28px;margin-bottom:10px}
+.rg-card-title{font-size:14px;font-weight:700;color:var(--black);margin-bottom:6px}
+.rg-card-desc{font-size:13px;color:var(--text-sub);line-height:1.6}
+.hotline-box{background:var(--black);border-radius:var(--r-xl);padding:24px;display:flex;align-items:center;gap:20px;margin:24px 0}
+.hotline-icon{font-size:32px;flex-shrink:0}
+.hotline-title{font-size:16px;font-weight:800;color:var(--white);margin-bottom:4px}
+.hotline-sub{font-size:13px;color:rgba(255,255,255,.5)}
+.hotline-num{font-size:22px;font-weight:900;color:var(--yellow);letter-spacing:.02em}
+
+/* ── ABOUT SPECIFIC ── */
+.team-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:16px;margin:24px 0}
+.team-card{background:var(--surface);border-radius:var(--r-xl);padding:20px;text-align:center}
+.team-avatar{width:56px;height:56px;border-radius:var(--r-full);background:var(--green-mid);display:flex;align-items:center;justify-content:center;font-size:22px;margin:0 auto 12px}
+.team-name{font-size:14px;font-weight:700;color:var(--black)}
+.team-role{font-size:12px;color:var(--text-muted);margin-top:3px}
+.stat-row{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin:24px 0;background:var(--black);border-radius:var(--r-xl);padding:24px}
+.stat-item{text-align:center}
+.stat-val{font-size:28px;font-weight:900;color:var(--yellow);letter-spacing:-.03em}
+.stat-lbl{font-size:12px;color:rgba(255,255,255,.45);margin-top:4px}
+
+/* ── RESPONSIVE ── */
+@media(max-width:768px){
+  .nav-links,.nav-actions{display:none}
+  .burger-btn{display:flex}
+  .footer-grid{grid-template-columns:1fr 1fr}
+  .footer-brand{grid-column:1/-1}
+  .stat-row{grid-template-columns:1fr}
+  .team-grid{grid-template-columns:repeat(2,1fr)}
+}
+@media(max-width:480px){
+  .footer-grid{grid-template-columns:1fr}
+  .footer-bottom{flex-direction:column;align-items:flex-start}
+}
+</style>
+</head>
+<body>
+
+<nav class="navbar" id="navbar" role="navigation" aria-label="Navigation principale">
+  <div class="container-wide navbar-inner">
+    <a href="betbox-landing.html" class="nav-logo" aria-label="BetBox — Accueil">
+      <svg width="108" height="28" viewBox="0 0 108 28" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <rect x="0" y="0" width="26" height="28" rx="5" fill="#f9c606"/>
+  <text x="13" y="20" font-family="Inter,sans-serif" font-size="15" font-weight="900" fill="#0d0d0d" text-anchor="middle">BB</text>
+  <text x="64" y="20" font-family="Inter,sans-serif" font-size="17" font-weight="800" fill="#ffffff" text-anchor="middle" letter-spacing="-0.5">BetBox</text>
+</svg>
+    </a>
+    <ul class="nav-links" role="list">
+      <li><a href="betbox-landing.html#sports"  class="nav-link" data-i18n="nav.sports">Sports</a></li>
+      <li><a href="betbox-landing.html#comment" class="nav-link" data-i18n="nav.how">Comment ça marche</a></li>
+      <li><a href="betbox-landing.html#bonus"   class="nav-link" data-i18n="nav.offers">Offres</a></li>
+      <li><a href="betbox-landing.html#avis"    class="nav-link" data-i18n="nav.reviews">Avis</a></li>
+    </ul>
+    <div class="nav-actions">
+      <button class="btn btn-outline-white btn-sm" data-i18n="nav.login">Se connecter</button>
+      <button class="btn btn-primary btn-sm" data-i18n="nav.signup">S'inscrire</button>
+      <div class="lang-switcher" role="group" aria-label="Langue">
+        <button class="lang-btn active" id="btnFR" onclick="setLang('fr')" aria-pressed="true">FR</button>
+        <button class="lang-btn"        id="btnEN" onclick="setLang('en')" aria-pressed="false">EN</button>
+      </div>
+    </div>
+    <button class="burger-btn" id="burgerBtn" aria-label="Menu" aria-expanded="false" aria-controls="mobileDrawer">
+      <span class="burger-line"></span><span class="burger-line"></span><span class="burger-line"></span>
+    </button>
+  </div>
+</nav>
+<div class="drawer-overlay" id="drawerOverlay" aria-hidden="true"></div>
+<div class="drawer" id="mobileDrawer" role="dialog" aria-modal="true" aria-label="Menu navigation">
+  <div class="drawer-header">
+    <a href="betbox-landing.html" class="nav-logo"><svg width="108" height="28" viewBox="0 0 108 28" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <rect x="0" y="0" width="26" height="28" rx="5" fill="#f9c606"/>
+  <text x="13" y="20" font-family="Inter,sans-serif" font-size="15" font-weight="900" fill="#0d0d0d" text-anchor="middle">BB</text>
+  <text x="64" y="20" font-family="Inter,sans-serif" font-size="17" font-weight="800" fill="#ffffff" text-anchor="middle" letter-spacing="-0.5">BetBox</text>
+</svg></a>
+    <button class="drawer-close" id="drawerClose" aria-label="Fermer">&times;</button>
+  </div>
+  <nav class="drawer-nav">
+    <a href="betbox-landing.html#sports"  class="drawer-nav-link"><span class="link-icon">⚽</span><span data-i18n="nav.sports">Sports</span></a>
+    <a href="betbox-landing.html#comment" class="drawer-nav-link"><span class="link-icon">💡</span><span data-i18n="nav.how">Comment ça marche</span></a>
+    <a href="betbox-landing.html#bonus"   class="drawer-nav-link"><span class="link-icon">🎁</span><span data-i18n="nav.offersBonus">Offres &amp; Bonus</span></a>
+    <a href="betbox-landing.html#avis"    class="drawer-nav-link"><span class="link-icon">⭐</span><span data-i18n="nav.customerReviews">Avis clients</span></a>
+  </nav>
+  <div class="drawer-footer">
+    <button class="btn btn-outline" style="border:1px solid var(--border);color:var(--text-sub);" data-i18n="nav.login">Se connecter</button>
+    <button class="btn btn-green" data-i18n="cta.createAccount">Créer mon compte</button>
+    <div class="lang-switcher" style="justify-content:center;background:var(--surface);margin-left:0">
+      <button class="lang-btn" id="btnFR2" style="color:var(--text-sub)" onclick="setLang('fr')">FR</button>
+      <button class="lang-btn" id="btnEN2" style="color:var(--text-sub)" onclick="setLang('en')">EN</button>
+    </div>
+  </div>
+</div>
+
+<section class="page-hero">
+  <div class="container">
+    <div class="breadcrumb">
+      <a href="betbox-landing.html" data-i18n="breadcrumb.home">Accueil</a>
+      <span class="breadcrumb-sep">/</span>
+      <span data-i18n="footer.terms">Conditions générales</span>
+    </div>
+    <p class="page-hero-eyebrow" data-i18n="cgu.eyebrow">Règles d'utilisation</p>
+    <h1 class="page-hero-title" data-i18n="cgu.title">Conditions générales d'utilisation</h1>
+    <p class="page-hero-desc" data-i18n="cgu.desc">En utilisant BetBox, vous acceptez l'intégralité des présentes conditions. Veuillez les lire attentivement avant de créer votre compte.</p>
+  </div>
+</section>
+
+<main class="page-content">
+  <div class="container">
+
+    <div class="content-section">
+      <h2 class="content-h2" data-i18n="cgu.s1.title">1. Éligibilité</h2>
+      <p class="content-p" data-i18n="cgu.s1.p1">L'accès à BetBox est réservé aux personnes physiques majeures (18 ans et plus) résidant dans un pays où les paris sportifs en ligne sont légaux. L'ouverture d'un compte est strictement interdite aux mineurs.</p>
+      <p class="content-p" data-i18n="cgu.s1.p2">Chaque utilisateur ne peut détenir qu'un seul compte actif sur BetBox. Tout compte supplémentaire détecté pourra être clôturé et les gains annulés.</p>
+    </div>
+
+    <div class="content-section">
+      <h2 class="content-h2" data-i18n="cgu.s2.title">2. Création de compte</h2>
+      <p class="content-p" data-i18n="cgu.s2.p">Lors de l'inscription, vous vous engagez à :</p>
+      <ul class="content-ul">
+        <li data-i18n="cgu.s2.li1">Fournir des informations exactes, complètes et à jour</li>
+        <li data-i18n="cgu.s2.li2">Maintenir la confidentialité de vos identifiants de connexion</li>
+        <li data-i18n="cgu.s2.li3">Nous notifier immédiatement de toute utilisation non autorisée de votre compte</li>
+        <li data-i18n="cgu.s2.li4">Ne pas céder votre compte à un tiers</li>
+      </ul>
+      <p class="content-p" data-i18n="cgu.s2.p2">BetBox se réserve le droit de demander une vérification d'identité (KYC) à tout moment. Le défaut de vérification dans les délais impartis peut entraîner la suspension du compte.</p>
+    </div>
+
+    <div class="content-section">
+      <h2 class="content-h2" data-i18n="cgu.s3.title">3. Dépôts et retraits</h2>
+      <h3 class="content-h3" data-i18n="cgu.s3.dep.title">Dépôts</h3>
+      <ul class="content-ul">
+        <li data-i18n="cgu.s3.dep.li1">Dépôt minimum : 500 FCFA</li>
+        <li data-i18n="cgu.s3.dep.li2">Méthodes acceptées : Orange Money, MTN Mobile Money</li>
+        <li data-i18n="cgu.s3.dep.li3">Traitement instantané sans frais cachés</li>
+      </ul>
+      <h3 class="content-h3" data-i18n="cgu.s3.with.title">Retraits</h3>
+      <ul class="content-ul">
+        <li data-i18n="cgu.s3.with.li1">Retrait minimum : 1 000 FCFA</li>
+        <li data-i18n="cgu.s3.with.li2">Délai de traitement : inférieur à 24 heures</li>
+        <li data-i18n="cgu.s3.with.li3">Un justificatif d'identité peut être requis pour les retraits importants</li>
+        <li data-i18n="cgu.s3.with.li4">Les retraits ne peuvent être effectués que vers le compte Mobile Money ayant servi au dépôt</li>
+      </ul>
+    </div>
+
+    <div class="content-section">
+      <h2 class="content-h2" data-i18n="cgu.s4.title">4. Paris sportifs</h2>
+      <ul class="content-ul">
+        <li data-i18n="cgu.s4.li1">Tout pari validé est définitif et irrévocable</li>
+        <li data-i18n="cgu.s4.li2">Les cotes affichées au moment de la validation du pari sont celles appliquées, même si elles évoluent par la suite</li>
+        <li data-i18n="cgu.s4.li3">BetBox se réserve le droit d'annuler un pari en cas d'erreur technique ou de cote manifestement erronée</li>
+        <li data-i18n="cgu.s4.li4">Les résultats sont établis selon les données officielles des organisateurs des compétitions</li>
+        <li data-i18n="cgu.s4.li5">Tout pari suspecté de manipulation peut être annulé et le compte suspendu</li>
+      </ul>
+    </div>
+
+    <div class="content-section">
+      <h2 class="content-h2" data-i18n="cgu.s5.title">5. Bonus et promotions</h2>
+      <p class="content-p" data-i18n="cgu.s5.p1">Les offres promotionnelles de BetBox sont soumises à des conditions spécifiques détaillées au moment de l'offre. En général :</p>
+      <ul class="content-ul">
+        <li data-i18n="cgu.s5.li1">Le bonus de bienvenue (jusqu'à 10 000 FCFA) est réservé aux nouveaux comptes</li>
+        <li data-i18n="cgu.s5.li2">Un bonus ne peut pas être directement retiré — il doit être misé un nombre de fois défini</li>
+        <li data-i18n="cgu.s5.li3">BetBox se réserve le droit de modifier ou retirer une promotion à tout moment</li>
+        <li data-i18n="cgu.s5.li4">Tout abus de bonus entraîne la clôture du compte et l'annulation des gains</li>
+      </ul>
+    </div>
+
+    <div class="content-section">
+      <h2 class="content-h2" data-i18n="cgu.s6.title">6. Comportements interdits</h2>
+      <p class="content-p" data-i18n="cgu.s6.p">Sont strictement interdits sur BetBox :</p>
+      <ul class="content-ul">
+        <li data-i18n="cgu.s6.li1">La manipulation de matchs ou toute forme de fraude sportive</li>
+        <li data-i18n="cgu.s6.li2">L'utilisation de robots, scripts ou systèmes automatisés</li>
+        <li data-i18n="cgu.s6.li3">Le blanchiment d'argent ou l'utilisation de fonds d'origine illicite</li>
+        <li data-i18n="cgu.s6.li4">La création de plusieurs comptes ou l'usurpation d'identité</li>
+        <li data-i18n="cgu.s6.li5">Tout comportement abusif envers notre équipe de support</li>
+      </ul>
+    </div>
+
+    <div class="content-section">
+      <h2 class="content-h2" data-i18n="cgu.s7.title">7. Limitation de responsabilité</h2>
+      <p class="content-p" data-i18n="cgu.s7.p1">BetBox ne peut être tenu responsable des pertes financières résultant de l'activité de paris, des interruptions de service dues à des causes indépendantes de notre volonté, ou des retards de traitement imputables aux prestataires de paiement.</p>
+      <p class="content-p" data-i18n="cgu.s7.p2">BetBox met tout en œuvre pour assurer la disponibilité de la plateforme 24h/24 mais ne garantit pas une disponibilité ininterrompue.</p>
+    </div>
+
+    <div class="content-section">
+      <h2 class="content-h2" data-i18n="cgu.s8.title">8. Modification des CGU &amp; Loi applicable</h2>
+      <p class="content-p" data-i18n="cgu.s8.p1">BetBox se réserve le droit de modifier les présentes CGU à tout moment. Les utilisateurs seront informés de toute modification significative par email ou notification en application. La poursuite de l'utilisation après notification vaut acceptation des nouvelles conditions.</p>
+      <p class="content-p" data-i18n="cgu.s8.p2">Les présentes CGU sont régies par le droit camerounais. Tout litige sera soumis à la compétence exclusive des tribunaux de Yaoundé, Cameroun.</p>
+    </div>
+
+    <p class="meta-note" data-i18n="meta.updated">Dernière mise à jour : janvier 2026</p>
+  </div>
+</main>
+
+<footer class="footer">
+  <div class="container-wide">
+    <div class="footer-grid">
+      <div class="footer-brand">
+        <a href="betbox-landing.html" class="nav-logo"><svg width="108" height="28" viewBox="0 0 108 28" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <rect x="0" y="0" width="26" height="28" rx="5" fill="#f9c606"/>
+  <text x="13" y="20" font-family="Inter,sans-serif" font-size="15" font-weight="900" fill="#0d0d0d" text-anchor="middle">BB</text>
+  <text x="64" y="20" font-family="Inter,sans-serif" font-size="17" font-weight="800" fill="#ffffff" text-anchor="middle" letter-spacing="-0.5">BetBox</text>
+</svg></a>
+        <p class="footer-tagline" data-i18n="footer.tagline">La plateforme de paris sportifs pensée pour l'Afrique. Simple, sécurisée et adaptée à vos usages.</p>
+      </div>
+      <div>
+        <div class="footer-col-title" data-i18n="footer.nav">Navigation</div>
+        <ul class="footer-links">
+          <li><a href="betbox-landing.html#sports"  class="footer-link" data-i18n="nav.sports">Sports</a></li>
+          <li><a href="betbox-landing.html#comment" class="footer-link" data-i18n="nav.how">Comment ça marche</a></li>
+          <li><a href="betbox-landing.html#bonus"   class="footer-link" data-i18n="nav.offers">Offres</a></li>
+          <li><a href="betbox-landing.html#avis"    class="footer-link" data-i18n="nav.reviews">Avis</a></li>
+        </ul>
+      </div>
+      <div>
+        <div class="footer-col-title" data-i18n="footer.info">Informations</div>
+        <ul class="footer-links">
+          <li><a href="betbox-about.html"       class="footer-link" data-i18n="footer.about">À propos</a></li>
+          <li><a href="betbox-responsible.html" class="footer-link" data-i18n="footer.responsible">Jeu responsable</a></li>
+          <li><a href="betbox-privacy.html"     class="footer-link" data-i18n="footer.privacy">Confidentialité</a></li>
+          <li><a href="betbox-cgu.html"         class="footer-link" data-i18n="footer.terms">Conditions générales</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <span class="footer-copy" data-i18n-html="footer.copy">&copy; 2026 BetBox &mdash; Tous droits réservés</span>
+      <div class="footer-bottom-links">
+        <a href="betbox-privacy.html" class="footer-link" data-i18n="footer.privacyPolicy">Politique de confidentialité</a>
+        <a href="betbox-cgu.html"     class="footer-link" data-i18n="footer.cgu">CGU</a>
+      </div>
+    </div>
+    <p class="footer-legal-note" data-i18n="footer.legal">Les jeux d'argent comportent des risques : endettement, isolement, dépendance. Ne jouez que ce que vous pouvez vous permettre de perdre. Interdit aux moins de 18 ans.</p>
+  </div>
+</footer>
+
+<script>
+// Navbar scroll
+const navbar = document.getElementById('navbar');
+window.addEventListener('scroll', () => { navbar.classList.toggle('scrolled', window.scrollY > 8); }, { passive: true });
+
+// Mobile Drawer
+const burger  = document.getElementById('burgerBtn');
+const drawer  = document.getElementById('mobileDrawer');
+const overlay = document.getElementById('drawerOverlay');
+const close   = document.getElementById('drawerClose');
+function openDrawer() { drawer.classList.add('open'); overlay.classList.add('open'); burger.classList.add('open'); burger.setAttribute('aria-expanded','true'); document.body.style.overflow='hidden'; }
+function closeDrawer(){ drawer.classList.remove('open'); overlay.classList.remove('open'); burger.classList.remove('open'); burger.setAttribute('aria-expanded','false'); document.body.style.overflow=''; }
+burger.addEventListener('click', () => drawer.classList.contains('open') ? closeDrawer() : openDrawer());
+close.addEventListener('click', closeDrawer);
+overlay.addEventListener('click', closeDrawer);
+document.addEventListener('keydown', e => { if (e.key === 'Escape' && drawer.classList.contains('open')) closeDrawer(); });
+drawer.querySelectorAll('.drawer-nav-link').forEach(l => l.addEventListener('click', closeDrawer));
+</script>
+<script>
+const T = {
+  fr: {
+    "nav.sports":"Sports","nav.how":"Comment ça marche","nav.offers":"Offres","nav.reviews":"Avis",
+    "nav.offersBonus":"Offres &amp; Bonus","nav.customerReviews":"Avis clients",
+    "nav.login":"Se connecter","nav.signup":"S'inscrire",
+    "cta.createAccount":"Créer mon compte",
+    "footer.tagline":"La plateforme de paris sportifs pensée pour l’Afrique. Simple, sécurisée et adaptée à vos usages.",
+    "footer.nav":"Navigation","footer.info":"Informations","footer.about":"À propos",
+    "footer.responsible":"Jeu responsable","footer.privacy":"Confidentialité","footer.terms":"Conditions générales",
+    "footer.copy":"&copy; 2026 BetBox &mdash; Tous droits réservés",
+    "footer.privacyPolicy":"Politique de confidentialité","footer.cgu":"CGU",
+    "footer.legal":"Les jeux d’argent comportent des risques : endettement, isolement, dépendance. Ne jouez que ce que vous pouvez vous permettre de perdre. Interdit aux moins de 18 ans.",
+
+    "breadcrumb.home":"Accueil",
+    "cgu.eyebrow":"Règles d’utilisation",
+    "cgu.title":"Conditions générales d’utilisation",
+    "cgu.desc":"En utilisant BetBox, vous acceptez l’intégralité des présentes conditions. Veuillez les lire attentivement avant de créer votre compte.",
+    "cgu.s1.title":"1. Éligibilité",
+    "cgu.s1.p1":"L’accès à BetBox est réservé aux personnes physiques majeures (18 ans et plus) résidant dans un pays où les paris sportifs en ligne sont légaux. L’ouverture d’un compte est strictement interdite aux mineurs.",
+    "cgu.s1.p2":"Chaque utilisateur ne peut détenir qu’un seul compte actif sur BetBox. Tout compte supplémentaire détecté pourra être clôturé et les gains annulés.",
+    "cgu.s2.title":"2. Création de compte","cgu.s2.p":"Lors de l’inscription, vous vous engagez à :",
+    "cgu.s2.li1":"Fournir des informations exactes, complètes et à jour",
+    "cgu.s2.li2":"Maintenir la confidentialité de vos identifiants de connexion",
+    "cgu.s2.li3":"Nous notifier immédiatement de toute utilisation non autorisée de votre compte",
+    "cgu.s2.li4":"Ne pas céder votre compte à un tiers",
+    "cgu.s2.p2":"BetBox se réserve le droit de demander une vérification d’identité (KYC) à tout moment. Le défaut de vérification dans les délais impartis peut entraîner la suspension du compte.",
+    "cgu.s3.title":"3. Dépôts et retraits",
+    "cgu.s3.dep.title":"Dépôts","cgu.s3.dep.li1":"Dépôt minimum : 500 FCFA","cgu.s3.dep.li2":"Méthodes acceptées : Orange Money, MTN Mobile Money","cgu.s3.dep.li3":"Traitement instantané sans frais cachés",
+    "cgu.s3.with.title":"Retraits","cgu.s3.with.li1":"Retrait minimum : 1 000 FCFA","cgu.s3.with.li2":"Délai de traitement : inférieur à 24 heures","cgu.s3.with.li3":"Un justificatif d’identité peut être requis pour les retraits importants","cgu.s3.with.li4":"Les retraits ne peuvent être effectués que vers le compte Mobile Money ayant servi au dépôt",
+    "cgu.s4.title":"4. Paris sportifs",
+    "cgu.s4.li1":"Tout pari validé est définitif et irrévocable",
+    "cgu.s4.li2":"Les cotes affichées au moment de la validation du pari sont celles appliquées, même si elles évoluent par la suite",
+    "cgu.s4.li3":"BetBox se réserve le droit d’annuler un pari en cas d’erreur technique ou de cote manifestement erronée",
+    "cgu.s4.li4":"Les résultats sont établis selon les données officielles des organisateurs des compétitions",
+    "cgu.s4.li5":"Tout pari suspecté de manipulation peut être annulé et le compte suspendu",
+    "cgu.s5.title":"5. Bonus et promotions",
+    "cgu.s5.p1":"Les offres promotionnelles de BetBox sont soumises à des conditions spécifiques détaillées au moment de l’offre. En général :",
+    "cgu.s5.li1":"Le bonus de bienvenue (jusqu’à 10 000 FCFA) est réservé aux nouveaux comptes",
+    "cgu.s5.li2":"Un bonus ne peut pas être directement retiré — il doit être misé un nombre de fois défini",
+    "cgu.s5.li3":"BetBox se réserve le droit de modifier ou retirer une promotion à tout moment",
+    "cgu.s5.li4":"Tout abus de bonus entraîne la clôture du compte et l’annulation des gains",
+    "cgu.s6.title":"6. Comportements interdits","cgu.s6.p":"Sont strictement interdits sur BetBox :",
+    "cgu.s6.li1":"La manipulation de matchs ou toute forme de fraude sportive",
+    "cgu.s6.li2":"L’utilisation de robots, scripts ou systèmes automatisés",
+    "cgu.s6.li3":"Le blanchiment d’argent ou l’utilisation de fonds d’origine illicite",
+    "cgu.s6.li4":"La création de plusieurs comptes ou l’usurpation d’identité",
+    "cgu.s6.li5":"Tout comportement abusif envers notre équipe de support",
+    "cgu.s7.title":"7. Limitation de responsabilité",
+    "cgu.s7.p1":"BetBox ne peut être tenu responsable des pertes financières résultant de l’activité de paris, des interruptions de service dues à des causes indépendantes de notre volonté, ou des retards de traitement imputables aux prestataires de paiement.",
+    "cgu.s7.p2":"BetBox met tout en œuvre pour assurer la disponibilité de la plateforme 24h/24 mais ne garantit pas une disponibilité ininterrompue.",
+    "cgu.s8.title":"8. Modification des CGU &amp; Loi applicable",
+    "cgu.s8.p1":"BetBox se réserve le droit de modifier les présentes CGU à tout moment. Les utilisateurs seront informés de toute modification significative par email ou notification en application. La poursuite de l’utilisation après notification vaut acceptation des nouvelles conditions.",
+    "cgu.s8.p2":"Les présentes CGU sont régies par le droit camerounais. Tout litige sera soumis à la compétence exclusive des tribunaux de Yaoundé, Cameroun.",
+    "meta.updated":"Dernière mise à jour : janvier 2026",
+},
+  en: {
+    "nav.sports":"Sports","nav.how":"How it works","nav.offers":"Offers","nav.reviews":"Reviews",
+    "nav.offersBonus":"Offers &amp; Bonus","nav.customerReviews":"Customer reviews",
+    "nav.login":"Log in","nav.signup":"Sign up",
+    "cta.createAccount":"Create my account",
+    "footer.tagline":"The sports betting platform built for Africa. Simple, secure and tailored to your needs.",
+    "footer.nav":"Navigation","footer.info":"Information","footer.about":"About us",
+    "footer.responsible":"Responsible gambling","footer.privacy":"Privacy","footer.terms":"Terms &amp; conditions",
+    "footer.copy":"&copy; 2026 BetBox &mdash; All rights reserved",
+    "footer.privacyPolicy":"Privacy policy","footer.cgu":"Terms of use",
+    "footer.legal":"Gambling involves risks: debt, isolation, addiction. Only gamble what you can afford to lose. 18+ only.",
+
+    "breadcrumb.home":"Home",
+    "cgu.eyebrow":"Terms of use",
+    "cgu.title":"Terms and conditions",
+    "cgu.desc":"By using BetBox, you accept these terms in their entirety. Please read them carefully before creating your account.",
+    "cgu.s1.title":"1. Eligibility",
+    "cgu.s1.p1":"Access to BetBox is reserved for adults (18 years and over) residing in a country where online sports betting is legal. Opening an account is strictly prohibited for minors.",
+    "cgu.s1.p2":"Each user may only hold one active account on BetBox. Any additional account detected may be closed and winnings cancelled.",
+    "cgu.s2.title":"2. Account creation","cgu.s2.p":"When registering, you agree to:",
+    "cgu.s2.li1":"Provide accurate, complete and up-to-date information",
+    "cgu.s2.li2":"Maintain the confidentiality of your login credentials",
+    "cgu.s2.li3":"Notify us immediately of any unauthorised use of your account",
+    "cgu.s2.li4":"Not transfer your account to a third party",
+    "cgu.s2.p2":"BetBox reserves the right to request identity verification (KYC) at any time. Failure to verify within the allotted time may result in account suspension.",
+    "cgu.s3.title":"3. Deposits and withdrawals",
+    "cgu.s3.dep.title":"Deposits","cgu.s3.dep.li1":"Minimum deposit: 500 FCFA","cgu.s3.dep.li2":"Accepted methods: Orange Money, MTN Mobile Money","cgu.s3.dep.li3":"Instant processing with no hidden fees",
+    "cgu.s3.with.title":"Withdrawals","cgu.s3.with.li1":"Minimum withdrawal: 1,000 FCFA","cgu.s3.with.li2":"Processing time: within 24 hours","cgu.s3.with.li3":"Proof of identity may be required for large withdrawals","cgu.s3.with.li4":"Withdrawals can only be made to the Mobile Money account used for the deposit",
+    "cgu.s4.title":"4. Sports betting",
+    "cgu.s4.li1":"Any validated bet is final and irrevocable",
+    "cgu.s4.li2":"The odds displayed at the time of bet validation are those applied, even if they change afterwards",
+    "cgu.s4.li3":"BetBox reserves the right to cancel a bet in case of technical error or manifestly incorrect odds",
+    "cgu.s4.li4":"Results are determined according to the official data of competition organisers",
+    "cgu.s4.li5":"Any bet suspected of manipulation may be cancelled and the account suspended",
+    "cgu.s5.title":"5. Bonuses and promotions",
+    "cgu.s5.p1":"BetBox promotional offers are subject to specific conditions detailed at the time of the offer. In general:",
+    "cgu.s5.li1":"The welcome bonus (up to 10,000 FCFA) is reserved for new accounts",
+    "cgu.s5.li2":"A bonus cannot be directly withdrawn — it must be wagered a defined number of times",
+    "cgu.s5.li3":"BetBox reserves the right to modify or withdraw a promotion at any time",
+    "cgu.s5.li4":"Any bonus abuse will result in account closure and cancellation of winnings",
+    "cgu.s6.title":"6. Prohibited conduct","cgu.s6.p":"The following are strictly prohibited on BetBox:",
+    "cgu.s6.li1":"Match fixing or any form of sports fraud",
+    "cgu.s6.li2":"Use of bots, scripts or automated systems",
+    "cgu.s6.li3":"Money laundering or use of funds of illicit origin",
+    "cgu.s6.li4":"Creating multiple accounts or identity theft",
+    "cgu.s6.li5":"Any abusive behaviour towards our support team",
+    "cgu.s7.title":"7. Limitation of liability",
+    "cgu.s7.p1":"BetBox cannot be held responsible for financial losses resulting from betting activity, service interruptions due to causes beyond our control, or processing delays attributable to payment providers.",
+    "cgu.s7.p2":"BetBox makes every effort to ensure platform availability 24/7 but does not guarantee uninterrupted availability.",
+    "cgu.s8.title":"8. Amendments &amp; Applicable law",
+    "cgu.s8.p1":"BetBox reserves the right to amend these Terms at any time. Users will be informed of any significant changes by email or in-app notification. Continued use after notification constitutes acceptance of the new terms.",
+    "cgu.s8.p2":"These Terms are governed by Cameroonian law. Any dispute shall be subject to the exclusive jurisdiction of the courts of Yaoundé, Cameroon.",
+    "meta.updated":"Last updated: January 2026",
+}
+};
+function setLang(lang) {
+  document.documentElement.setAttribute('data-lang', lang);
+  document.documentElement.setAttribute('lang', lang);
+  ['btnFR','btnFR2'].forEach(id => { const b = document.getElementById(id); if(b) { b.classList.toggle('active', lang==='fr'); b.setAttribute('aria-pressed', lang==='fr'); } });
+  ['btnEN','btnEN2'].forEach(id => { const b = document.getElementById(id); if(b) { b.classList.toggle('active', lang==='en'); b.setAttribute('aria-pressed', lang==='en'); } });
+  const dict = T[lang];
+  document.querySelectorAll('[data-i18n-html]').forEach(el => { const k=el.getAttribute('data-i18n-html'); if(dict[k]!==undefined) el.innerHTML=dict[k]; });
+  document.querySelectorAll('[data-i18n]').forEach(el => { const k=el.getAttribute('data-i18n'); if(dict[k]!==undefined) el.innerHTML=dict[k]; });
+  if(lang==='fr') document.title="Conditions générales — BetBox";
+  else document.title="Terms & Conditions — BetBox";
+  
+}
+</script>
+</body>
+</html>

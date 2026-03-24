@@ -1,0 +1,1785 @@
+<!DOCTYPE html>
+<html lang="fr" data-lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title data-i18n-title>BetBox — Paris Sportifs au Cameroun</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+
+  <style>
+    /* ===========================
+       DESIGN TOKENS
+    =========================== */
+    :root {
+      --yellow:       #f9c606;
+      --yellow-hover: #e6b400;
+      --yellow-dim:   rgba(249,198,6,0.12);
+
+      --green:        #3e8e60;
+      --green-dark:   #2f6a48;
+      --green-deeper: #1e4530;
+      --green-light:  #eaf5ee;
+      --green-mid:    rgba(62,142,96,0.14);
+
+      --black:        #0d0d0d;
+      --black-mid:    #111111;
+      --black-soft:   #161616;
+      --black-card:   #1a1a1a;
+      --black-border: #222222;
+
+      --white:        #ffffff;
+      --surface:      #f5f5f4;
+      --border:       #e4e3df;
+
+      --text-primary: #0d0d0d;
+      --text-sub:     #5c5c5c;
+      --text-muted:   #999;
+
+      --font:         'Inter', system-ui, -apple-system, sans-serif;
+      --font-display: 'Inter', system-ui, -apple-system, sans-serif;
+
+      --r-sm:   4px;
+      --r-md:   8px;
+      --r-lg:   12px;
+      --r-xl:   16px;
+      --r-2xl:  24px;
+      --r-3xl:  32px;
+      --r-full: 9999px;
+
+      --ease:        cubic-bezier(0.2, 0, 0, 1);
+      --ease-bounce: cubic-bezier(0.34, 1.56, 0.64, 1);
+      --ease-out:    cubic-bezier(0, 0, 0.2, 1);
+    }
+
+    /* ===========================
+       RESET
+    =========================== */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body {
+      font-family: var(--font);
+      color: var(--text-primary);
+      background: var(--white);
+      -webkit-font-smoothing: antialiased;
+      overflow-x: hidden;
+    }
+    a   { text-decoration: none; color: inherit; }
+    img { display: block; max-width: 100%; }
+    button { font-family: var(--font); cursor: pointer; border: none; background: none; }
+    ul { list-style: none; }
+
+    /* ===========================
+       ANIMATIONS
+    =========================== */
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(24px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+    @keyframes fadeIn {
+      from { opacity: 0; } to { opacity: 1; }
+    }
+    @keyframes overlayIn  { from { opacity: 0; } to { opacity: 1; } }
+    @keyframes pulseDot {
+      0%,100% { opacity:1; transform:scale(1); }
+      50%     { opacity:.4; transform:scale(.8); }
+    }
+    @keyframes shimmer {
+      0%   { background-position: -200% center; }
+      100% { background-position:  200% center; }
+    }
+    @keyframes glowPulse {
+      0%,100% { opacity:.5; transform:scale(1); }
+      50%     { opacity:.8; transform:scale(1.05); }
+    }
+    @keyframes floatUp {
+      0%,100% { transform:translateY(0); }
+      50%     { transform:translateY(-6px); }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      *,*::before,*::after { animation-duration:.01ms!important; transition-duration:.01ms!important; }
+    }
+
+    /* ===========================
+       LAYOUT
+    =========================== */
+    .container { max-width:1200px; margin:0 auto; padding:0 24px; }
+    .section    { padding:96px 0; }
+
+    /* ===========================
+       BUTTONS
+    =========================== */
+    .btn {
+      display:inline-flex; align-items:center; justify-content:center; gap:8px;
+      padding:12px 22px; border-radius:var(--r-md);
+      font-size:14px; font-weight:700; letter-spacing:-0.02em;
+      transition:all 180ms var(--ease); cursor:pointer; white-space:nowrap;
+      will-change:transform; line-height:1;
+    }
+    .btn:hover  { transform:translateY(-1px); }
+    .btn:active { transform:translateY(0) scale(.98); }
+    .btn:focus-visible { outline:2px solid var(--yellow); outline-offset:3px; }
+
+    .btn-primary {
+      background:var(--yellow); color:var(--black);
+      position:relative; overflow:hidden;
+    }
+    .btn-primary::after {
+      content:'';
+      position:absolute; inset:0;
+      background:linear-gradient(90deg, transparent 0%, rgba(255,255,255,.35) 50%, transparent 100%);
+      background-size:200% auto;
+      opacity:0; transition:opacity 200ms;
+    }
+    .btn-primary:hover::after { opacity:1; animation:shimmer 700ms linear; }
+    .btn-primary:hover { background:var(--yellow-hover); box-shadow:0 8px 28px rgba(249,198,6,.45); }
+
+    .btn-green    { background:var(--green); color:var(--white); }
+    .btn-green:hover { background:var(--green-dark); box-shadow:0 8px 24px rgba(62,142,96,.35); }
+
+    .btn-dark     { background:var(--black); color:var(--white); }
+    .btn-dark:hover { background:#1a1a1a; box-shadow:0 8px 24px rgba(0,0,0,.3); }
+
+    .btn-outline-white {
+      background:transparent; color:var(--white);
+      border:1.5px solid rgba(255,255,255,.3);
+    }
+    .btn-outline-white:hover { background:rgba(255,255,255,.08); border-color:rgba(255,255,255,.6); }
+
+    .btn-outline-green {
+      background:transparent; color:var(--white);
+      border:1.5px solid rgba(255,255,255,.35);
+    }
+    .btn-outline-green:hover { background:rgba(255,255,255,.1); border-color:rgba(255,255,255,.7); }
+
+    .btn-lg { padding:15px 28px; font-size:15px; border-radius:var(--r-lg); }
+    .btn-sm { padding:8px 16px; font-size:12px; border-radius:var(--r-sm); }
+
+    /* ===========================
+       TAGS
+    =========================== */
+    .tag {
+      display:inline-flex; align-items:center; gap:5px;
+      padding:5px 11px; border-radius:var(--r-full);
+      font-size:11px; font-weight:700; letter-spacing:.02em;
+    }
+    .tag-green-dark { background:rgba(62,142,96,.18); color:#a3d9be; }
+    .tag-white      { background:rgba(255,255,255,.1); color:rgba(255,255,255,.65); }
+
+
+    /* ===========================
+       LANG SWITCHER
+    =========================== */
+    .lang-switcher {
+      display:flex; align-items:center; gap:2px;
+      background:rgba(255,255,255,.07);
+      border-radius:var(--r-sm); padding:3px;
+      margin-left:12px; flex-shrink:0;
+    }
+    .lang-btn {
+      padding:4px 10px; border-radius:4px;
+      font-size:11px; font-weight:700; letter-spacing:.04em;
+      color:rgba(255,255,255,.45); cursor:pointer;
+      transition:all 150ms; line-height:1;
+      background:transparent; border:none; font-family:var(--font);
+    }
+    .lang-btn.active {
+      background:var(--green); color:var(--white);
+    }
+    .lang-btn:hover:not(.active) { color:var(--white); }
+
+    /* ===========================
+       LIVE TICKER
+    =========================== */
+    .ticker-bar {
+      background:var(--yellow); overflow:hidden;
+      height:36px; display:flex; align-items:center;
+    }
+    .ticker-label {
+      flex-shrink:0; background:var(--black); color:var(--yellow);
+      font-size:10px; font-weight:900; letter-spacing:.1em;
+      text-transform:uppercase; padding:0 14px; height:100%;
+      display:flex; align-items:center; z-index:1;
+    }
+    .ticker-track {
+      display:flex; gap:0;
+      animation:tickerScroll 28s linear infinite;
+      white-space:nowrap;
+    }
+    .ticker-bar:hover .ticker-track { animation-play-state:paused; }
+    @keyframes tickerScroll {
+      from { transform:translateX(0); }
+      to   { transform:translateX(-50%); }
+    }
+    .ticker-item {
+      display:inline-flex; align-items:center; gap:10px;
+      padding:0 24px; font-size:12px; font-weight:700;
+      color:var(--black); letter-spacing:-.01em;
+    }
+    .ticker-icon {
+      font-size:14px; flex-shrink:0;
+      display:inline-flex; align-items:center;
+    }
+    .ticker-teams { font-weight:800; }
+    .ticker-time  { opacity:.55; font-size:11px; }
+    .ticker-odds  { display:flex; gap:4px; }
+    .t-odd {
+      background:rgba(0,0,0,.12); padding:2px 6px;
+      border-radius:3px; font-size:11px; font-weight:700;
+    }
+    .ticker-sep { opacity:.3; font-size:16px; }
+
+    /* ===========================
+       NAVBAR  (noir)
+    =========================== */
+    .navbar {
+      position:sticky; top:0; z-index:300;
+      background:rgba(13,13,13,.92);
+      backdrop-filter:blur(16px) saturate(1.3);
+      -webkit-backdrop-filter:blur(16px) saturate(1.3);
+      border-bottom:1px solid rgba(255,255,255,.06);
+      transition:box-shadow 200ms var(--ease);
+    }
+    .navbar.scrolled { box-shadow:0 4px 32px rgba(0,0,0,.5), 0 1px 0 rgba(62,142,96,.12); }
+
+    .navbar-inner {
+      display:flex; align-items:center; height:64px; gap:32px;
+    }
+    .nav-logo {
+      display:flex; align-items:center;
+      flex-shrink:0;
+      transition:opacity 150ms;
+      line-height:1;
+    }
+    .nav-logo:hover { opacity:.85; }
+
+    .nav-links { display:flex; align-items:center; gap:2px; flex:1; }
+    .nav-link {
+      padding:7px 14px; border-radius:var(--r-md);
+      font-size:14px; font-weight:500;
+      color:rgba(255,255,255,.75);
+      transition:all 150ms var(--ease);
+    }
+    .nav-link:hover  { color:var(--white); background:rgba(255,255,255,.1); }
+    .nav-link.active { color:var(--white); font-weight:700; }
+
+    .nav-actions { display:flex; align-items:center; gap:8px; margin-left:auto; }
+
+    /* Burger */
+    .burger-btn {
+      display:none; flex-direction:column; justify-content:center;
+      align-items:center; gap:5px; width:40px; height:40px;
+      border-radius:var(--r-md); margin-left:auto;
+      transition:background 150ms;
+    }
+    .burger-btn:hover { background:rgba(255,255,255,.12); }
+    .burger-line {
+      width:20px; height:2px; background:var(--white);
+      border-radius:2px; transition:all 250ms var(--ease);
+      transform-origin:center;
+    }
+    .burger-btn.open .burger-line:nth-child(1) { transform:translateY(7px) rotate(45deg); }
+    .burger-btn.open .burger-line:nth-child(2) { opacity:0; transform:scaleX(0); }
+    .burger-btn.open .burger-line:nth-child(3) { transform:translateY(-7px) rotate(-45deg); }
+
+    /* ===========================
+       MOBILE DRAWER
+    =========================== */
+    .drawer-overlay {
+      display:none; position:fixed; inset:0;
+      background:rgba(0,0,0,.55); z-index:399;
+      backdrop-filter:blur(4px);
+    }
+    .drawer-overlay.open { display:block; animation:overlayIn 250ms var(--ease); }
+
+    .drawer {
+      position:fixed; top:0; right:0; bottom:0;
+      width:min(300px,85vw); background:var(--white); z-index:400;
+      display:flex; flex-direction:column;
+      transform:translateX(100%);
+      transition:transform 280ms var(--ease-out);
+      box-shadow:-8px 0 48px rgba(0,0,0,.18);
+    }
+    .drawer.open { transform:translateX(0); }
+
+    .drawer-header {
+      display:flex; align-items:center; justify-content:space-between;
+      padding:20px 24px;
+      background:var(--black);
+    }
+    .drawer-logo {
+      display:flex; align-items:center; gap:10px;
+      line-height:1;
+    }
+    .drawer-close {
+      width:32px; height:32px; border-radius:var(--r-md);
+      display:flex; align-items:center; justify-content:center;
+      color:rgba(255,255,255,.7); font-size:16px;
+      transition:background 150ms; cursor:pointer;
+    }
+    .drawer-close:hover { background:rgba(255,255,255,.15); color:var(--white); }
+
+    .drawer-nav { flex:1; padding:12px; overflow-y:auto; }
+    .drawer-nav-link {
+      display:flex; align-items:center; gap:12px;
+      padding:12px 16px; border-radius:var(--r-lg);
+      font-size:15px; font-weight:600; color:var(--text-sub);
+      transition:all 150ms; letter-spacing:-.02em;
+    }
+    .drawer-nav-link .link-icon {
+      width:30px; height:30px; border-radius:var(--r-md);
+      background:var(--surface);
+      display:flex; align-items:center; justify-content:center;
+      font-size:16px; flex-shrink:0;
+      transition:background 150ms;
+    }
+    .drawer-nav-link:hover { color:var(--black); background:var(--surface); }
+    .drawer-nav-link:hover .link-icon { background:var(--green-light); }
+
+    .drawer-footer {
+      padding:16px 20px 28px;
+      border-top:1px solid var(--border);
+      display:flex; flex-direction:column; gap:8px;
+    }
+    .drawer-footer .btn { width:100%; justify-content:center; }
+
+    /* ===========================
+       HERO  (dark)
+    =========================== */
+    .hero {
+      background:var(--black); padding:80px 0 0;
+      overflow:hidden; position:relative;
+    }
+    .hero::before {
+      content:'';
+      position:absolute; inset:0; z-index:0; pointer-events:none;
+      background:
+        radial-gradient(ellipse 70% 60% at 70% 90%, rgba(62,142,96,.18) 0%, transparent 70%),
+        radial-gradient(ellipse 40% 40% at 15% 20%, rgba(249,198,6,.05) 0%, transparent 60%);
+    }
+    .hero::after {
+      content:'';
+      position:absolute; inset:0; z-index:0; pointer-events:none; opacity:.025;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
+      background-size:128px;
+    }
+
+    .hero-grid {
+      display:grid; grid-template-columns:1fr 1fr;
+      gap:56px; align-items:flex-end; position:relative; z-index:1;
+    }
+    .hero-content {
+      padding-bottom:80px;
+      animation:fadeUp 550ms var(--ease) both;
+    }
+    .hero-eyebrow { display:flex; align-items:center; gap:8px; margin-bottom:22px; flex-wrap:wrap; }
+
+    .hero-title {
+      font-family: var(--font-display);
+      font-size:clamp(42px, 5vw, 66px);
+      font-weight:900; letter-spacing:-.03em; line-height:1.0;
+      color:var(--white); margin-bottom:20px;
+    }
+    .hero-title .t-green  { color:var(--green); }
+    .hero-title .t-yellow { color:var(--yellow); }
+
+    .hero-desc {
+      font-size:17px; color:rgba(255,255,255,.5);
+      line-height:1.65; margin-bottom:36px; max-width:460px;
+    }
+    .hero-ctas { display:flex; align-items:center; gap:12px; flex-wrap:wrap; }
+
+    .hero-trust {
+      display:flex; align-items:center; gap:20px;
+      margin-top:40px; padding-top:28px;
+      border-top:1px solid var(--black-border);
+    }
+    .trust-item {
+      display:flex; align-items:center; gap:7px;
+      font-size:12px; color:rgba(255,255,255,.4); font-weight:500;
+      white-space:nowrap;
+    }
+    .trust-item i { color:var(--green); font-size:13px; }
+    .trust-sep {
+      width:1px; height:14px;
+      background:var(--black-border);
+      flex-shrink:0;
+    }
+
+    /* --- App Mock --- */
+    .hero-visual {
+      position:relative; display:flex; justify-content:center;
+      animation:fadeUp 550ms 120ms var(--ease) both;
+    }
+    .app-mockup {
+      width:100%; max-width:520px;
+      background:var(--black-soft);
+      border-radius:var(--r-2xl) var(--r-2xl) 0 0;
+      overflow:hidden;
+      border:1px solid rgba(255,255,255,.07); border-bottom:none;
+      box-shadow:
+        0 -32px 100px rgba(62,142,96,.2),
+        0 -8px 40px rgba(62,142,96,.1),
+        0 0 0 1px rgba(255,255,255,.04);
+      animation:floatUp 5s ease-in-out infinite;
+    }
+    .mock-topbar {
+      background:var(--black-mid); padding:12px 16px;
+      display:flex; align-items:center; gap:8px;
+      border-bottom:1px solid var(--black-border);
+    }
+    .mock-logo-icon {
+      width:22px; height:22px; border-radius:5px;
+      background:var(--green); color:white;
+      font-size:11px; font-weight:900;
+      display:flex; align-items:center; justify-content:center;
+    }
+    .mock-logo-text { color:white; font-size:13px; font-weight:800; letter-spacing:-.04em; }
+    .mock-tb-actions { margin-left:auto; display:flex; gap:6px; }
+    .mock-tb-btn {
+      padding:4px 10px; border-radius:4px;
+      font-size:10px; font-weight:700; font-family:var(--font); cursor:default;
+    }
+    .mock-tb-btn.login    { background:#1f1f1f; color:#666; }
+    .mock-tb-btn.register { background:var(--yellow); color:var(--black); }
+
+    .mock-body { display:flex; height:290px; }
+    .mock-sidebar {
+      width:128px; background:rgba(0,0,0,.3);
+      border-right:1px solid var(--black-border);
+      padding:8px 0; flex-shrink:0;
+    }
+    .mock-sb-section {
+      padding:6px 12px 3px;
+      font-size:8px; font-weight:700; color:#333;
+      letter-spacing:.06em; text-transform:uppercase;
+    }
+    .mock-sb-item {
+      display:flex; align-items:center; gap:7px;
+      padding:7px 12px;
+      font-size:10px; font-weight:600; color:#555;
+    }
+    .mock-sb-item i { font-size:11px; width:12px; text-align:center; }
+    .mock-sb-item.active { color:var(--white); background:rgba(255,255,255,.05); }
+    .mock-sb-item.active i { color:var(--green); }
+
+    .mock-content { flex:1; padding:10px; background:#111; overflow:hidden; }
+    .mock-tabs { display:flex; gap:4px; margin-bottom:10px; }
+    .mock-tab { padding:4px 10px; border-radius:4px; font-size:9px; font-weight:700; color:#555; }
+    .mock-tab.active { background:var(--green-mid); color:#7dd3a8; }
+
+    .mock-match {
+      background:#1a1a1a; border-radius:6px;
+      padding:8px 10px; margin-bottom:5px; border:1px solid #222;
+    }
+    .mock-mh { display:flex; justify-content:space-between; margin-bottom:5px; }
+    .mock-league { font-size:8px; color:#3a3a3a; font-weight:700; text-transform:uppercase; letter-spacing:.04em; }
+    .mock-time   { font-size:8px; color:var(--green); font-weight:700; }
+    .mock-teams  { display:flex; align-items:center; justify-content:space-between; margin-bottom:7px; }
+    .mock-team   { font-size:10px; font-weight:800; color:white; }
+    .mock-vs     { font-size:9px; color:#2a2a2a; font-weight:700; }
+    .mock-odds   { display:flex; gap:4px; }
+    .mock-odd {
+      flex:1; background:#222; border:1px solid #2a2a2a;
+      border-radius:4px; padding:5px 4px; text-align:center;
+    }
+    .mock-odd.sel { background:rgba(62,142,96,.18); border-color:var(--green); }
+    .mock-odd-l { font-size:7px; color:#444; font-weight:600; display:block; margin-bottom:2px; }
+    .mock-odd-v { font-size:10px; color:white; font-weight:800; }
+    .mock-odd.sel .mock-odd-v { color:#7dd3a8; }
+
+    .mock-betslip {
+      width:108px; background:#0a0a0a;
+      border-left:1px solid var(--black-border);
+      padding:10px; flex-shrink:0;
+    }
+    .mock-bs-title { font-size:9px; font-weight:800; color:white; margin-bottom:8px; }
+    .mock-bs-item {
+      background:#1a1a1a; border-radius:4px;
+      padding:5px; margin-bottom:4px; border:1px solid #222;
+    }
+    .mock-bs-m { font-size:7px; color:#444; margin-bottom:2px; }
+    .mock-bs-p { font-size:8px; color:white; font-weight:700; display:flex; justify-content:space-between; }
+    .mock-bs-odd { color:var(--yellow); }
+    .mock-bs-sep { border:none; border-top:1px solid #1a1a1a; margin:6px 0; }
+    .mock-bs-row { display:flex; justify-content:space-between; font-size:8px; color:#444; margin-bottom:3px; }
+    .mock-bs-val  { color:white; font-weight:700; }
+    .mock-bs-gain { color:var(--yellow); }
+    .mock-bs-cta {
+      width:100%; background:var(--yellow); color:var(--black);
+      border-radius:4px; padding:6px; font-size:9px; font-weight:900;
+      font-family:var(--font); margin-top:6px; letter-spacing:.02em;
+      cursor:default; border:none;
+    }
+
+    /* Floating badges */
+    .mock-float {
+      position:absolute; background:white;
+      border-radius:var(--r-xl); padding:10px 14px;
+      box-shadow:0 16px 48px rgba(0,0,0,.2);
+      border:1px solid var(--border);
+      display:flex; align-items:center; gap:10px;
+    }
+    .mock-float-1 { bottom:28px; left:-24px; }
+    .mock-float-2 { top:44px;   right:-16px; }
+    .float-icon {
+      width:30px; height:30px; border-radius:var(--r-lg);
+      display:flex; align-items:center; justify-content:center;
+      font-size:13px; flex-shrink:0;
+    }
+    .fi-g { background:var(--green-light); color:var(--green-dark); }
+    .fi-y { background:var(--yellow-dim); color:#7a5e00; }
+    .float-title { font-size:12px; font-weight:800; letter-spacing:-.03em; color:var(--black); }
+    .float-sub   { font-size:11px; color:var(--text-sub); margin-top:1px; }
+
+    /* ===========================
+       STATS BAR  (vert)
+    =========================== */
+    .stats-bar {
+      background:var(--black-soft);
+      position:relative; overflow:hidden;
+    }
+    .stats-bar::before {
+      content:''; position:absolute; inset:0; pointer-events:none;
+      background: linear-gradient(90deg,
+        transparent 0%,
+        rgba(62,142,96,.07) 30%,
+        rgba(249,198,6,.04) 70%,
+        transparent 100%);
+    }
+    .stats-grid { display:grid; grid-template-columns:repeat(4,1fr); }
+    .stat-item {
+      padding:36px 24px; text-align:center;
+      border-right:1px solid rgba(255,255,255,.15);
+    }
+    .stat-item:last-child { border-right:none; }
+    .stat-value {
+      font-family: var(--font-display);
+      font-size:38px; font-weight:900;
+      letter-spacing:-.03em; color:var(--white);
+      margin-bottom:4px; line-height:1;
+    }
+    .stat-item:first-child .stat-value { color:var(--yellow); }
+    .stat-label { font-size:12px; color:rgba(255,255,255,.45); font-weight:500; text-transform:uppercase; letter-spacing:.05em; }
+
+    /* ===========================
+       SECTION HEADER
+    =========================== */
+    .sec-header { text-align:center; margin-bottom:56px; }
+    .sec-eyebrow {
+      display:inline-flex; align-items:center; gap:6px;
+      font-size:11px; font-weight:700; letter-spacing:.07em;
+      text-transform:uppercase; margin-bottom:14px;
+    }
+    .ey-green { color:var(--green); }
+    .ey-white { color:rgba(255,255,255,.45); }
+
+    .sec-title {
+      font-family: var(--font-display);
+      font-size:clamp(28px, 3.5vw, 44px);
+      font-weight:900; letter-spacing:-.02em;
+      line-height:1.06; margin-bottom:14px;
+    }
+    .sec-title-white { color:var(--white); }
+    .sec-desc { font-size:16px; line-height:1.65; max-width:520px; margin:0 auto; }
+    .sec-desc-sub   { color:var(--text-sub); }
+    .sec-desc-white { color:rgba(255,255,255,.5); }
+
+    /* ===========================
+       FEATURES  (fond clair)
+    =========================== */
+    .features { background:var(--surface); }
+    .features-grid { display:grid; grid-template-columns:repeat(2,1fr); gap:16px; }
+    .feat-card {
+      background:var(--white); border-radius:var(--r-2xl);
+      padding:32px; border:1px solid var(--border);
+      transition:all 250ms var(--ease); contain:layout style;
+      position:relative; overflow:hidden;
+    }
+    .feat-card::before {
+      content:''; position:absolute; inset:0; opacity:0;
+      background:linear-gradient(135deg, rgba(62,142,96,.04) 0%, rgba(249,198,6,.03) 100%);
+      transition:opacity 250ms;
+    }
+    .feat-card:hover::before { opacity:1; }
+    .feat-card:hover {
+      border-color:rgba(62,142,96,.4);
+      transform:translateY(-3px);
+      box-shadow:0 12px 40px rgba(0,0,0,.08), 0 0 0 1px rgba(62,142,96,.08);
+    }
+    .feat-icon {
+      width:50px; height:50px; border-radius:var(--r-xl);
+      display:flex; align-items:center; justify-content:center;
+      font-size:24px; margin-bottom:20px;
+    }
+    .fi-green  { background:var(--green-light); }
+    .fi-yellow { background:var(--yellow-dim); }
+    .fi-dark   { background:rgba(13,13,13,.06); }
+    .fi-blue   { background:rgba(59,130,246,.08); }
+    .feat-title { font-size:17px; font-weight:800; letter-spacing:-.03em; margin-bottom:8px; }
+    .feat-desc  { font-size:14px; color:var(--text-sub); line-height:1.65; }
+
+    /* ===========================
+       SPORTS  (fond noir)
+    =========================== */
+    .sports {
+      background:var(--black);
+      position:relative; overflow:hidden;
+    }
+    .sports::before {
+      content:''; position:absolute; inset:0; pointer-events:none;
+      background:radial-gradient(ellipse 80% 60% at 50% 50%, rgba(62,142,96,.07) 0%, transparent 65%);
+    }
+    .sports-grid { display:flex; flex-wrap:wrap; gap:10px; justify-content:center; }
+    .sport-pill {
+      display:flex; align-items:center; gap:9px;
+      padding:11px 20px; border-radius:var(--r-full);
+      border:1px solid rgba(255,255,255,.08);
+      font-size:13px; font-weight:600;
+      color:rgba(255,255,255,.4);
+      transition:all 200ms var(--ease);
+      background:rgba(255,255,255,.03);
+      cursor:default;
+    }
+    .sport-pill:hover {
+      border-color:rgba(62,142,96,.5); color:var(--white);
+      background:rgba(62,142,96,.12);
+      transform:translateY(-2px);
+      box-shadow:0 4px 16px rgba(62,142,96,.15);
+    }
+    .sport-pill.hot {
+      border-color:rgba(62,142,96,.4); color:rgba(255,255,255,.85);
+      background:rgba(62,142,96,.1);
+    }
+    .pill-badge {
+      font-size:9px; font-weight:800; padding:2px 8px;
+      border-radius:var(--r-full);
+      background:var(--green); color:white;
+      letter-spacing:.03em; text-transform:uppercase;
+    }
+
+    /* ===========================
+       HOW IT WORKS  (fond blanc)
+    =========================== */
+    .hiw { background:var(--white); }
+    .steps-grid {
+      display:grid; grid-template-columns:repeat(3,1fr);
+      gap:48px; position:relative;
+    }
+    .steps-grid::before {
+      content:''; position:absolute;
+      top:26px; left:calc(16.6% + 10px); right:calc(16.6% + 10px);
+      height:1px;
+      background:linear-gradient(90deg, transparent, rgba(62,142,96,.3) 20%, rgba(62,142,96,.3) 80%, transparent);
+    }
+    .step-card { text-align:center; }
+    .step-num {
+      font-family: var(--font-display);
+      width:56px; height:56px; border-radius:50%;
+      border:1.5px solid var(--border); background:var(--white);
+      font-size:20px; font-weight:900; letter-spacing:-.03em;
+      display:flex; align-items:center; justify-content:center;
+      margin:0 auto 24px; position:relative; z-index:1;
+      transition:all 250ms var(--ease-bounce); color:var(--black);
+      box-shadow:0 4px 16px rgba(0,0,0,.06);
+    }
+    .step-card:hover .step-num {
+      background:var(--green); border-color:var(--green);
+      color:var(--white); transform:scale(1.12);
+      box-shadow:0 8px 24px rgba(62,142,96,.35);
+    }
+    .step-title { font-size:17px; font-weight:800; letter-spacing:-.03em; margin-bottom:10px; }
+    .step-desc  { font-size:14px; color:var(--text-sub); line-height:1.65; }
+
+    /* ===========================
+       PROMO  (fond noir)
+    =========================== */
+    .promo { background:var(--black); }
+    .promo-card {
+      background:var(--black-card);
+      border-radius:var(--r-3xl); overflow:hidden;
+      padding:64px; position:relative;
+      display:grid; grid-template-columns:1fr auto;
+      gap:48px; align-items:center;
+      border:1px solid rgba(62,142,96,.2);
+      box-shadow:inset 0 3px 0 var(--green);
+    }
+    .promo-card::before {
+      content:''; position:absolute; inset:0; pointer-events:none;
+      background:
+        radial-gradient(ellipse 60% 80% at 90% 50%, rgba(62,142,96,.12) 0%, transparent 65%),
+        radial-gradient(ellipse 30% 40% at 5% 80%, rgba(249,198,6,.06) 0%, transparent 50%);
+    }
+    .promo-content { position:relative; z-index:1; }
+    .promo-eyebrow {
+      display:flex; align-items:center; gap:8px;
+      font-size:11px; font-weight:700; letter-spacing:.08em;
+      text-transform:uppercase; color:var(--green); margin-bottom:16px;
+    }
+    .promo-title {
+      font-family: var(--font-display);
+      font-size:clamp(30px, 3vw, 48px); font-weight:900;
+      letter-spacing:-.02em; line-height:1.05;
+      color:var(--white); margin-bottom:14px;
+    }
+    .promo-title span { color:var(--yellow); }
+    .promo-desc  { font-size:15px; color:#666; line-height:1.65; margin-bottom:32px; max-width:460px; }
+    .promo-ctas  { display:flex; align-items:center; gap:12px; flex-wrap:wrap; }
+    .promo-terms { font-size:11px; color:#333; margin-top:12px; }
+
+    .bonus-widget {
+      position:relative; z-index:1;
+      background:var(--black-mid);
+      border:1px solid var(--black-border);
+      box-shadow:inset 0 2px 0 var(--yellow);
+      border-radius:var(--r-2xl);
+      padding:36px 32px; text-align:center; flex-shrink:0;
+    }
+    .bonus-amount   { font-size:52px; font-weight:900; letter-spacing:-.05em; color:var(--yellow); line-height:1; margin-bottom:4px; }
+    .bonus-currency { font-size:16px; font-weight:700; color:rgba(255,255,255,.3); margin-bottom:4px; }
+    .bonus-label    { font-size:11px; color:#444; font-weight:700; text-transform:uppercase; letter-spacing:.06em; margin-top:8px; }
+
+    /* ===========================
+       TESTIMONIALS  (fond noir)
+    =========================== */
+    .testimonials { background:var(--black-mid); }
+    .testi-grid {
+      display:grid; grid-template-columns:repeat(3,1fr); gap:16px;
+    }
+    .testi-card {
+      background:var(--black-card); border-radius:var(--r-2xl);
+      padding:28px; border:1px solid rgba(255,255,255,.05);
+      transition:all 250ms var(--ease); position:relative; overflow:hidden;
+    }
+    .testi-card::before {
+      content:''; position:absolute; top:0; left:0; right:0;
+      height:1px;
+      background:linear-gradient(90deg, transparent, rgba(62,142,96,.4), transparent);
+      opacity:0; transition:opacity 250ms;
+    }
+    .testi-card:hover::before { opacity:1; }
+    .testi-card:hover {
+      border-color:rgba(62,142,96,.2);
+      box-shadow:0 12px 40px rgba(0,0,0,.2), 0 0 0 1px rgba(62,142,96,.08);
+      transform:translateY(-2px);
+    }
+    .testi-stars { display:flex; gap:2px; margin-bottom:14px; }
+    .star     { color:var(--yellow); font-size:13px; }
+    .star-dim { color:#222; font-size:13px; }
+    .testi-text {
+      font-size:14px; color:#666; line-height:1.7;
+      margin-bottom:20px; font-style:italic;
+    }
+    .testi-author { display:flex; align-items:center; gap:10px; }
+    .author-av {
+      width:36px; height:36px; border-radius:50%;
+      display:flex; align-items:center; justify-content:center;
+      font-size:12px; font-weight:800; color:white; flex-shrink:0;
+    }
+    .author-name { font-size:13px; font-weight:700; letter-spacing:-.02em; color:var(--white); }
+    .author-loc  { font-size:11px; color:#444; margin-top:2px; }
+
+    /* ===========================
+       FOOTER  (noir)
+    =========================== */
+    .footer { background:var(--black); }
+
+    .footer-main {
+      display:grid;
+      grid-template-columns:1.8fr 1fr 1fr;
+      gap:56px;
+      padding:56px 0 48px;
+      border-bottom:1px solid rgba(255,255,255,.12);
+    }
+    .footer-brand-col {}
+    .footer-logo {
+      display:flex; align-items:center;
+      margin-bottom:14px; line-height:1;
+    }
+    .footer-tagline {
+      font-size:13px; color:rgba(255,255,255,.55);
+      line-height:1.65; max-width:230px; margin-bottom:24px;
+    }
+    .footer-socials { display:flex; gap:8px; }
+    .social-btn {
+      width:34px; height:34px;
+      background:rgba(255,255,255,.1);
+      border-radius:var(--r-sm);
+      display:flex; align-items:center; justify-content:center;
+      color:rgba(255,255,255,.65); font-size:14px;
+      transition:all 150ms; border:1px solid rgba(255,255,255,.1);
+    }
+    .social-btn:hover { background:rgba(255,255,255,.2); color:var(--white); }
+
+    .footer-col-title {
+      font-size:11px; font-weight:700; letter-spacing:.07em;
+      text-transform:uppercase; color:var(--white); margin-bottom:18px;
+    }
+    .footer-links { display:flex; flex-direction:column; gap:10px; }
+    .footer-links a {
+      font-size:13px; color:rgba(255,255,255,.5);
+      transition:color 150ms;
+    }
+    .footer-links a:hover { color:var(--white); }
+
+    .footer-bottom {
+      display:flex; align-items:center;
+      justify-content:space-between; flex-wrap:wrap; gap:14px;
+      padding:20px 0 24px;
+    }
+    .footer-copy { font-size:12px; color:rgba(255,255,255,.3); }
+    .footer-legal { display:flex; gap:20px; }
+    .footer-legal a { font-size:12px; color:rgba(255,255,255,.3); transition:color 150ms; }
+    .footer-legal a:hover { color:rgba(255,255,255,.75); }
+
+    .age-badge {
+      width:26px; height:26px; border-radius:50%;
+      border:2px solid rgba(255,255,255,.2);
+      display:flex; align-items:center; justify-content:center;
+      font-size:9px; font-weight:900; color:rgba(255,255,255,.3);
+    }
+    .responsible {
+      font-size:11px; color:rgba(255,255,255,.2);
+      padding-top:16px; border-top:1px solid rgba(255,255,255,.08);
+      line-height:1.6; margin-top:4px;
+    }
+
+    /* ===========================
+       SCROLL FADE-IN
+    =========================== */
+    .fade-in {
+      opacity:0; transform:translateY(18px);
+      transition:opacity 500ms var(--ease), transform 500ms var(--ease);
+    }
+    .fade-in.visible { opacity:1; transform:none; }
+
+    /* ===========================
+       RESPONSIVE
+    =========================== */
+    @media (max-width:1024px) {
+      .hero-grid { grid-template-columns:1fr; }
+      .hero-content { padding-bottom:0; }
+      .hero-visual { display:none; }
+      .stats-grid { grid-template-columns:repeat(2,1fr); }
+      .stat-item:nth-child(2) { border-right:none; }
+      .stat-item:nth-child(3),
+      .stat-item:nth-child(4) { border-top:1px solid rgba(255,255,255,.15); }
+      .footer-main { grid-template-columns:1fr 1fr; gap:32px; }
+    }
+
+    @media (max-width:768px) {
+      .section { padding:64px 0; }
+      .container { padding:0 16px; }
+
+      .nav-links, .nav-actions { display:none; }
+      .burger-btn { display:flex; }
+
+      .hero { padding:56px 0 0; }
+      .hero-title { font-size:34px; }
+      .hero-desc { font-size:15px; }
+
+      /* hero-trust : ligne horizontale compacte sur mobile */
+      .hero-trust {
+        gap:0;
+        padding-top:24px;
+        margin-top:28px;
+        justify-content:space-between;
+      }
+      .trust-item {
+        flex-direction:column;
+        align-items:center;
+        gap:5px;
+        font-size:11px;
+        text-align:center;
+        white-space:normal;
+        flex:1;
+      }
+      .trust-item i { font-size:16px; }
+      .trust-sep { height:24px; }
+
+      .features-grid { grid-template-columns:1fr; }
+      .steps-grid { grid-template-columns:1fr; gap:32px; }
+      .steps-grid::before { display:none; }
+      .testi-grid { grid-template-columns:1fr; }
+
+      .promo-card { grid-template-columns:1fr; padding:36px 24px; text-align:center; }
+      .bonus-widget { width:fit-content; margin:0 auto; }
+      .promo-ctas { justify-content:center; }
+
+      .footer-main { grid-template-columns:1fr; gap:32px; padding:48px 0 40px; }
+      .footer-bottom { flex-direction:column; align-items:flex-start; gap:10px; }
+    }
+
+    @media (max-width:480px) {
+      .hero-title { font-size:28px; }
+      .hero-ctas { flex-direction:column; align-items:stretch; }
+      .hero-ctas .btn { justify-content:center; }
+      .feat-card { padding:24px; }
+      .promo-card { padding:28px 20px; }
+      .stat-value { font-size:28px; }
+      /* trust items encore plus compacts */
+      .trust-item { font-size:10px; }
+    }
+
+    @media (max-width:480px) {
+      .hero-title { font-size:28px; }
+      .feat-card { padding:24px; }
+      .promo-card { padding:28px 20px; }
+      .stat-value { font-size:28px; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- ========== LIVE TICKER ========== -->
+<div class="ticker-bar" role="marquee" aria-label="Matchs en direct">
+  <div class="ticker-label">Live</div>
+  <div class="ticker-track">
+    <div class="ticker-item">
+      <span class="ticker-icon">⚽</span>
+      <span class="ticker-teams">PSG — Real Madrid</span>
+      <span class="ticker-time">20:45</span>
+      <span class="ticker-odds"><span class="t-odd">2.10</span><span class="t-odd">3.40</span><span class="t-odd">3.20</span></span>
+    </div><span class="ticker-sep">|</span>
+    <div class="ticker-item">
+      <span class="ticker-icon">⚽</span>
+      <span class="ticker-teams">Man City — Liverpool</span>
+      <span class="ticker-time">21:00</span>
+      <span class="ticker-odds"><span class="t-odd">1.95</span><span class="t-odd">3.50</span><span class="t-odd">3.80</span></span>
+    </div><span class="ticker-sep">|</span>
+    <div class="ticker-item">
+      <span class="ticker-icon">⚽</span>
+      <span class="ticker-teams">Bayern — Dortmund</span>
+      <span class="ticker-time">18:30</span>
+      <span class="ticker-odds"><span class="t-odd">1.75</span><span class="t-odd">3.80</span><span class="t-odd">4.50</span></span>
+    </div><span class="ticker-sep">|</span>
+    <div class="ticker-item">
+      <span class="ticker-icon">⚽</span>
+      <span class="ticker-teams">Barcelona — Atlético</span>
+      <span class="ticker-time">19:00</span>
+      <span class="ticker-odds"><span class="t-odd">1.85</span><span class="t-odd">3.60</span><span class="t-odd">4.10</span></span>
+    </div><span class="ticker-sep">|</span>
+    <div class="ticker-item">
+      <span class="ticker-icon">🎾</span>
+      <span class="ticker-teams">Federer — Djokovic</span>
+      <span class="ticker-time">15:00</span>
+      <span class="ticker-odds"><span class="t-odd">2.30</span><span class="t-odd">1.60</span></span>
+    </div><span class="ticker-sep">|</span>
+    <div class="ticker-item">
+      <span class="ticker-icon">🏀</span>
+      <span class="ticker-teams">Lakers — Warriors</span>
+      <span class="ticker-time">02:30</span>
+      <span class="ticker-odds"><span class="t-odd">1.90</span><span class="t-odd">1.90</span></span>
+    </div><span class="ticker-sep">|</span>
+    <!-- duplicate for seamless loop -->
+    <div class="ticker-item">
+      <span class="ticker-icon">⚽</span>
+      <span class="ticker-teams">PSG — Real Madrid</span>
+      <span class="ticker-time">20:45</span>
+      <span class="ticker-odds"><span class="t-odd">2.10</span><span class="t-odd">3.40</span><span class="t-odd">3.20</span></span>
+    </div><span class="ticker-sep">|</span>
+    <div class="ticker-item">
+      <span class="ticker-icon">⚽</span>
+      <span class="ticker-teams">Man City — Liverpool</span>
+      <span class="ticker-time">21:00</span>
+      <span class="ticker-odds"><span class="t-odd">1.95</span><span class="t-odd">3.50</span><span class="t-odd">3.80</span></span>
+    </div><span class="ticker-sep">|</span>
+    <div class="ticker-item">
+      <span class="ticker-icon">⚽</span>
+      <span class="ticker-teams">Bayern — Dortmund</span>
+      <span class="ticker-time">18:30</span>
+      <span class="ticker-odds"><span class="t-odd">1.75</span><span class="t-odd">3.80</span><span class="t-odd">4.50</span></span>
+    </div><span class="ticker-sep">|</span>
+    <div class="ticker-item">
+      <span class="ticker-icon">⚽</span>
+      <span class="ticker-teams">Barcelona — Atlético</span>
+      <span class="ticker-time">19:00</span>
+      <span class="ticker-odds"><span class="t-odd">1.85</span><span class="t-odd">3.60</span><span class="t-odd">4.10</span></span>
+    </div><span class="ticker-sep">|</span>
+    <div class="ticker-item">
+      <span class="ticker-icon">🎾</span>
+      <span class="ticker-teams">Federer — Djokovic</span>
+      <span class="ticker-time">15:00</span>
+      <span class="ticker-odds"><span class="t-odd">2.30</span><span class="t-odd">1.60</span></span>
+    </div><span class="ticker-sep">|</span>
+    <div class="ticker-item">
+      <span class="ticker-icon">🏀</span>
+      <span class="ticker-teams">Lakers — Warriors</span>
+      <span class="ticker-time">02:30</span>
+      <span class="ticker-odds"><span class="t-odd">1.90</span><span class="t-odd">1.90</span></span>
+    </div><span class="ticker-sep">|</span>
+  </div>
+</div>
+
+<!-- ========== NAVBAR ========== -->
+<nav class="navbar" id="navbar" role="navigation" aria-label="Navigation principale">
+  <div class="container">
+    <div class="navbar-inner">
+
+      <a href="#" class="nav-logo" aria-label="BetBox — Accueil">
+        <!-- Logo horizontal — version fond vert (texte blanc) -->
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 163.68 33.57" height="26" aria-hidden="true" focusable="false">
+          <defs><style>.nl1{fill:#e3b505}.nl2{fill:rgba(255,255,255,0.92)}.nl3{fill:#1e4530}</style></defs>
+          <!-- Texte BetBox -->
+          <path class="nl2" d="M68.88,25.71c0,1.37-.27,2.52-.81,3.45-.54.93-1.26,1.68-2.16,2.25s-1.92.97-3.06,1.22-2.32.37-3.52.37h-9.98V7.95h9.98c.97,0,1.96.1,2.97.3,1.01.2,1.93.54,2.76,1.03.82.48,1.5,1.14,2.02,1.96.52.83.78,1.87.78,3.15,0,1.39-.38,2.54-1.13,3.45s-1.75,1.56-2.97,1.96v.07c.71.12,1.37.34,2,.65.62.32,1.17.73,1.63,1.22.46.5.83,1.07,1.1,1.73.27.66.41,1.4.41,2.23ZM62.01,15.21c0-.85-.32-1.47-.97-1.86-.65-.39-1.61-.58-2.88-.58h-2.97v5.16h3.25c1.13,0,2.01-.23,2.64-.69.62-.46.94-1.14.94-2.03ZM62.83,25.15c0-1.04-.39-1.76-1.17-2.16-.78-.4-1.82-.6-3.11-.6h-3.36v5.73h3.4c.47,0,.96-.04,1.47-.12.51-.08.97-.23,1.38-.44.41-.21.75-.51,1.01-.9.26-.39.39-.89.39-1.5Z"/>
+          <path class="nl2" d="M88.62,24.4v.71c0,.24-.01.46-.04.67h-12.77c.05.5.19.94.44,1.34.25.4.57.75.96,1.04.39.3.83.53,1.31.69s.98.25,1.5.25c.92,0,1.7-.17,2.33-.51.64-.34,1.16-.78,1.56-1.33l4.03,2.55c-.83,1.2-1.92,2.13-3.27,2.78-1.36.65-2.93.97-4.72.97-1.32,0-2.57-.21-3.75-.62-1.18-.41-2.21-1.01-3.1-1.8-.88-.79-1.58-1.76-2.09-2.92-.51-1.16-.76-2.48-.76-3.96s.25-2.74.74-3.91c.5-1.17,1.17-2.16,2.02-2.97.85-.81,1.85-1.44,3.01-1.89,1.16-.45,2.41-.67,3.75-.67s2.49.22,3.57.65c1.08.44,2.02,1.07,2.79,1.89.78.83,1.39,1.83,1.82,3.01.44,1.18.65,2.52.65,4.03ZM83.28,22.17c0-.92-.29-1.71-.87-2.37-.58-.66-1.44-.99-2.6-.99-.57,0-1.09.09-1.56.27-.47.18-.88.42-1.24.73-.35.31-.64.67-.85,1.08-.21.41-.33.84-.35,1.29h7.46Z"/>
+          <path class="nl2" d="M97.11,19.7v6.75c0,.83.16,1.45.48,1.86.32.41.89.62,1.72.62.28,0,.58-.02.9-.07.32-.05.58-.12.8-.21l.07,4.25c-.4.14-.91.27-1.52.37-.61.11-1.23.16-1.84.16-1.18,0-2.17-.15-2.97-.44-.8-.3-1.44-.72-1.93-1.28-.48-.56-.83-1.22-1.04-1.99-.21-.77-.32-1.63-.32-2.57v-7.45h-2.83v-4.32h2.8v-4.63h5.7v4.63h4.14v4.32h-4.14Z"/>
+          <path class="nl2" d="M122.4,25.71c0,1.37-.27,2.52-.81,3.45-.54.93-1.26,1.68-2.16,2.25s-1.92.97-3.06,1.22-2.32.37-3.52.37h-9.98V7.95h9.98c.97,0,1.96.1,2.97.3,1.01.2,1.93.54,2.76,1.03.82.48,1.5,1.14,2.02,1.96.52.83.78,1.87.78,3.15,0,1.39-.38,2.54-1.13,3.45s-1.75,1.56-2.97,1.96v.07c.71.12,1.37.34,2,.65.62.32,1.17.73,1.63,1.22.46.5.83,1.07,1.1,1.73.27.66.41,1.4.41,2.23ZM115.54,15.21c0-.85-.32-1.47-.97-1.86-.65-.39-1.61-.58-2.88-.58h-2.97v5.16h3.25c1.13,0,2.01-.23,2.64-.69.62-.46.94-1.14.94-2.03ZM116.35,25.15c0-1.04-.39-1.76-1.17-2.16-.78-.4-1.82-.6-3.11-.6h-3.36v5.73h3.4c.47,0,.96-.04,1.47-.12.51-.08.97-.23,1.38-.44.41-.21.75-.51,1.01-.9.26-.39.39-.89.39-1.5Z"/>
+          <path class="nl2" d="M143.34,24.12c0,1.44-.26,2.74-.78,3.91-.52,1.17-1.23,2.16-2.12,2.97-.9.81-1.93,1.44-3.11,1.89-1.18.45-2.44.67-3.79.67s-2.58-.22-3.77-.67c-1.19-.45-2.23-1.08-3.11-1.89-.88-.81-1.59-1.8-2.1-2.97-.52-1.17-.78-2.47-.78-3.91s.26-2.74.78-3.89c.52-1.16,1.22-2.13,2.1-2.94.88-.8,1.92-1.41,3.11-1.84,1.19-.42,2.45-.64,3.77-.64s2.61.21,3.79.64,2.22,1.04,3.11,1.84c.9.8,1.6,1.78,2.12,2.94.52,1.16.78,2.45.78,3.89ZM137.75,24.12c0-.57-.09-1.12-.28-1.66-.19-.54-.46-1.02-.81-1.43-.35-.41-.79-.75-1.31-1.01-.52-.26-1.12-.39-1.8-.39s-1.29.13-1.8.39c-.52.26-.95.6-1.29,1.01-.34.41-.6.89-.78,1.43-.18.54-.27,1.1-.27,1.66s.09,1.12.27,1.66c.18.54.44,1.03.8,1.47.35.44.79.78,1.31,1.04.52.26,1.12.39,1.8.39s1.29-.13,1.8-.39c.52-.26.96-.61,1.31-1.04.35-.44.62-.93.8-1.47.18-.54.27-1.1.27-1.66Z"/>
+          <path class="nl2" d="M156.86,33l-3.79-5.41-3.89,5.41h-6.72l7.04-9.23-6.37-8.38h6.76l3.29,4.71,3.33-4.71h6.54l-6.33,8.38,6.97,9.23h-6.83Z"/>
+          <!-- Icône double B -->
+          <path class="nl3" d="M10.31,9.35h-1.66v-2.64h1.52c.65,0,1.14.1,1.47.3.33.2.5.52.5.95,0,.46-.16.8-.48,1.04-.32.23-.77.35-1.35.35Z"/>
+          <path class="nl3" d="M12.55,13.04c0,.31-.06.57-.2.77-.13.19-.3.35-.51.46-.21.11-.45.18-.71.22-.25.04-.5.07-.75.07h-1.73v-2.93h1.72c.66,0,1.19.1,1.59.31.39.2.59.57.59,1.1Z"/>
+          <path class="nl3" d="M0,0v21.31h21.31V0H0ZM15.23,15.09c-.28.47-.65.86-1.1,1.15-.46.29-.98.49-1.57.62-.58.13-1.18.19-1.8.19h-5.09V4.26h5.09c.5,0,1,.05,1.52.15.52.1.99.28,1.41.52.42.25.77.58,1.03,1.01.27.42.4.95.4,1.6,0,.72-.19,1.3-.58,1.77-.39.46-.89.79-1.52,1v.04c.36.06.7.17,1.02.33s.6.37.84.62c.23.26.42.55.56.89.13.34.2.72.2,1.14,0,.7-.14,1.28-.41,1.76Z"/>
+          <path class="nl1" d="M32.84,22.03h-1.66v-2.64h1.52c.65,0,1.14.1,1.47.3.33.2.5.51.5.95s-.16.8-.48,1.04c-.32.23-.77.35-1.35.35Z"/>
+          <path class="nl1" d="M35.08,25.71c0,.32-.06.57-.2.77-.13.2-.3.35-.51.46-.21.11-.45.19-.71.23-.25.04-.51.06-.75.06h-1.73v-2.93h1.72c.66,0,1.19.11,1.59.31.39.21.59.57.59,1.1Z"/>
+          <path class="nl1" d="M22.95,13.09v20.48h20.47V13.09h-20.47ZM37.76,27.77c-.28.47-.65.85-1.11,1.14-.45.29-.97.5-1.56.63-.58.12-1.18.19-1.8.19h-5.09v-12.8h5.09c.5,0,1,.05,1.52.16.52.1.99.27,1.41.52s.77.58,1.03,1c.27.42.4.96.4,1.61,0,.71-.19,1.3-.58,1.76-.39.47-.89.8-1.52,1.01v.03c.36.06.7.17,1.02.34.32.16.6.37.83.62.24.25.43.55.56.89.14.33.21.71.21,1.13,0,.7-.14,1.29-.41,1.77Z"/>
+        </svg>
+      </a>
+
+      <div class="nav-links">
+        <a href="#sports" class="nav-link" data-i18n="nav.sports">Sports</a>
+        <a href="#comment" class="nav-link" data-i18n="nav.how">Comment ça marche</a>
+        <a href="#bonus" class="nav-link" data-i18n="nav.offers">Offres</a>
+        <a href="#avis" class="nav-link" data-i18n="nav.reviews">Avis</a>
+      </div>
+
+      <div class="nav-actions">
+        <button class="btn btn-outline-green btn-sm" data-i18n="nav.login">Se connecter</button>
+        <button class="btn btn-primary btn-sm" data-i18n="nav.signup">S'inscrire</button>
+      </div>
+
+      <div class="lang-switcher" role="group" aria-label="Langue">
+        <button class="lang-btn active" id="btnFR" onclick="setLang('fr')" aria-pressed="true">FR</button>
+        <button class="lang-btn"        id="btnEN" onclick="setLang('en')" aria-pressed="false">EN</button>
+      </div>
+
+      <button class="burger-btn" id="burgerBtn"
+        aria-label="Ouvrir le menu" aria-expanded="false" aria-controls="mobileDrawer">
+        <span class="burger-line"></span>
+        <span class="burger-line"></span>
+        <span class="burger-line"></span>
+      </button>
+
+    </div>
+  </div>
+</nav>
+
+<!-- ========== MOBILE DRAWER ========== -->
+<div class="drawer-overlay" id="drawerOverlay" aria-hidden="true"></div>
+<div class="drawer" id="mobileDrawer" role="dialog" aria-label="Menu" aria-modal="true">
+  <div class="drawer-header">
+    <div class="drawer-logo" aria-label="BetBox">
+      <!-- Logo compact -->
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 97.35 75.26" height="30" aria-hidden="true" focusable="false">
+        <defs><style>.cl1{fill:#e3b505}.cl2{fill:#2a6041}</style></defs>
+        <path class="cl2" d="M23.12,20.97h-3.73v-5.91h3.41c1.45,0,2.55.22,3.3.67.74.44,1.11,1.15,1.11,2.12,0,1.03-.36,1.81-1.07,2.33-.72.53-1.72.79-3.02.79Z"/>
+        <path class="cl2" d="M28.14,29.24c0,.7-.14,1.27-.44,1.72-.3.45-.68.79-1.16,1.03-.47.25-1,.42-1.58.51-.58.1-1.14.14-1.68.14h-3.89v-6.56h3.85c1.49,0,2.68.23,3.57.69.89.46,1.33,1.28,1.33,2.47Z"/>
+        <path class="cl2" d="M0,0v47.78h47.78V0H0ZM34.14,33.84c-.62,1.06-1.44,1.92-2.47,2.57-1.03.65-2.2,1.11-3.5,1.4-1.32.28-2.66.42-4.04.42h-11.42V9.55h11.42c1.11,0,2.25.11,3.41.34,1.16.23,2.21.62,3.16,1.18.94.55,1.71,1.3,2.31,2.25.59.94.89,2.14.89,3.6,0,1.6-.43,2.91-1.3,3.95-.86,1.04-2,1.79-3.4,2.25v.08c.81.14,1.57.39,2.29.75.71.37,1.33.83,1.86,1.4.53.57.95,1.23,1.26,1.98.31.76.46,1.61.46,2.56,0,1.56-.31,2.88-.93,3.95Z"/>
+        <path class="cl1" d="M73.63,49.39h-3.72v-5.91h3.4c1.46,0,2.56.22,3.3.67.74.44,1.12,1.15,1.12,2.12,0,1.03-.36,1.81-1.08,2.33-.71.53-1.72.79-3.02.79Z"/>
+        <path class="cl1" d="M78.66,57.66c0,.7-.15,1.28-.45,1.72-.3.45-.68.79-1.15,1.03-.48.25-1,.42-1.58.51-.58.1-1.15.14-1.69.14h-3.88v-6.56h3.84c1.49,0,2.68.23,3.57.69.89.46,1.34,1.28,1.34,2.47Z"/>
+        <path class="cl1" d="M51.45,29.36v45.9h45.9V29.36h-45.9ZM84.65,62.26c-.62,1.06-1.44,1.92-2.47,2.57-1.03.65-2.19,1.12-3.5,1.4-1.31.28-2.66.42-4.03.42h-11.43v-28.68h11.43c1.1,0,2.24.11,3.4.34s2.21.62,3.16,1.18c.94.55,1.71,1.3,2.31,2.25.59.94.89,2.14.89,3.6,0,1.6-.43,2.91-1.3,3.95-.86,1.04-2,1.79-3.4,2.25v.08c.81.14,1.57.39,2.29.75.71.37,1.34.83,1.86,1.4.53.57.95,1.23,1.26,1.99.31.75.46,1.6.46,2.55,0,1.56-.31,2.88-.93,3.95Z"/>
+      </svg>
+      <span style="color:white;font-weight:900;font-size:17px;letter-spacing:-.05em;">BetBox</span>
+    </div>
+    <button class="drawer-close" id="drawerClose" aria-label="Fermer">
+      <i class="fa-solid fa-xmark"></i>
+    </button>
+  </div>
+  <nav class="drawer-nav" aria-label="Menu mobile">
+    <a href="#sports"  class="drawer-nav-link"><span class="link-icon">⚽</span><span data-i18n="nav.sports">Sports</span></a>
+    <a href="#comment" class="drawer-nav-link"><span class="link-icon">💡</span><span data-i18n="nav.how">Comment ça marche</span></a>
+    <a href="#bonus"   class="drawer-nav-link"><span class="link-icon">🎁</span><span data-i18n="nav.offersBonus">Offres &amp; Bonus</span></a>
+    <a href="#avis"    class="drawer-nav-link"><span class="link-icon">⭐</span><span data-i18n="nav.customerReviews">Avis clients</span></a>
+  </nav>
+  <div class="drawer-footer">
+    <button class="btn btn-outline" style="border-color:var(--border);color:var(--text-sub);" data-i18n="nav.login">Se connecter</button>
+    <button class="btn btn-green" data-i18n="cta.createAccount">Créer mon compte</button>
+  </div>
+</div>
+
+<!-- ========== HERO ========== -->
+<main>
+<section class="hero" aria-labelledby="hero-title">
+  <div class="container">
+    <div class="hero-grid">
+
+      <!-- Texte -->
+      <div class="hero-content">
+        <div class="hero-eyebrow">
+          <span class="tag tag-green-dark">
+            🟢
+            Disponible au Cameroun
+          </span>
+          <span class="tag tag-white" data-i18n="hero.badgeSub">Paris sportifs en ligne</span>
+        </div>
+        <h1 class="hero-title" id="hero-title" data-i18n-html="hero.title">Pariez sur vos<br/>sports <span class="t-green">préférés</span>,<br/><span class="t-yellow">gagnez plus.</span></h1>
+        <p class="hero-desc" data-i18n="hero.desc">BetBox vous offre les meilleures cotes sur la Ligue 1 Camerounaise, la CAN, la Premier League et plus de 30 autres sports — avec des retraits rapides via Orange Money et MTN MoMo.</p>
+        <div class="hero-ctas">
+          <button class="btn btn-primary btn-lg" data-i18n="cta.openAccount">Ouvrir mon compte →</button>
+          <button class="btn btn-outline-white btn-lg" data-i18n="cta.seeOdds">Voir les cotes</button>
+        </div>
+        <div class="hero-trust">
+          <div class="trust-item">
+            🔒
+            Sécurisé &amp; agréé
+          </div>
+          <span class="trust-sep" aria-hidden="true"></span>
+          <div class="trust-item">
+            💳
+            Orange Money &amp; MTN
+          </div>
+          <span class="trust-sep" aria-hidden="true"></span>
+          <div class="trust-item">
+            ⚡
+            Retraits rapides
+          </div>
+        </div>
+      </div>
+
+      <!-- Mockup (desktop) -->
+      <div class="hero-visual" aria-hidden="true">
+        <div class="app-mockup">
+          <div class="mock-topbar">
+            <div class="mock-logo-icon">B</div>
+            <span class="mock-logo-text">BetBox</span>
+            <div class="mock-tb-actions">
+              <div class="mock-tb-btn login">Connexion</div>
+              <div class="mock-tb-btn register">S'inscrire</div>
+            </div>
+          </div>
+          <div class="mock-body">
+            <div class="mock-sidebar">
+              <div class="mock-sb-section">Sports</div>
+              <div class="mock-sb-item active">⚽ Football</div>
+              <div class="mock-sb-item">🏀 Basket</div>
+              <div class="mock-sb-item">🎾 Tennis</div>
+              <div class="mock-sb-item">🏈 NFL</div>
+              <div class="mock-sb-item">🎮 Esport</div>
+              <div class="mock-sb-section" style="margin-top:8px;">Compétitions</div>
+              <div class="mock-sb-item">🏆 Ligue 1 Cam.</div>
+              <div class="mock-sb-item">🌍 CAN 2025</div>
+            </div>
+            <div class="mock-content">
+              <div class="mock-tabs">
+                <div class="mock-tab active">À venir</div>
+                <div class="mock-tab">Live</div>
+              </div>
+              <div class="mock-match">
+                <div class="mock-mh">
+                  <span class="mock-league">Ligue 1 Camerounaise</span>
+                  <span class="mock-time">20:45</span>
+                </div>
+                <div class="mock-teams">
+                  <span class="mock-team">Fovu Club</span>
+                  <span class="mock-vs">—</span>
+                  <span class="mock-team">Canon Yaoundé</span>
+                </div>
+                <div class="mock-odds">
+                  <div class="mock-odd sel"><span class="mock-odd-l">1</span><span class="mock-odd-v">2.10</span></div>
+                  <div class="mock-odd"><span class="mock-odd-l">N</span><span class="mock-odd-v">3.40</span></div>
+                  <div class="mock-odd"><span class="mock-odd-l">2</span><span class="mock-odd-v">3.20</span></div>
+                </div>
+              </div>
+              <div class="mock-match">
+                <div class="mock-mh">
+                  <span class="mock-league">Coupe de la CAN</span>
+                  <span class="mock-time">21:00</span>
+                </div>
+                <div class="mock-teams">
+                  <span class="mock-team">Cameroun</span>
+                  <span class="mock-vs">—</span>
+                  <span class="mock-team">Sénégal</span>
+                </div>
+                <div class="mock-odds">
+                  <div class="mock-odd"><span class="mock-odd-l">1</span><span class="mock-odd-v">1.95</span></div>
+                  <div class="mock-odd"><span class="mock-odd-l">N</span><span class="mock-odd-v">3.50</span></div>
+                  <div class="mock-odd sel"><span class="mock-odd-l">2</span><span class="mock-odd-v">3.80</span></div>
+                </div>
+              </div>
+            </div>
+            <div class="mock-betslip">
+              <div class="mock-bs-title" data-i18n="mock.myBet">Mon ticket</div>
+              <div class="mock-bs-item">
+                <div class="mock-bs-m">Fovu — Canon</div>
+                <div class="mock-bs-p">Fovu <span class="mock-bs-odd">2.10</span></div>
+              </div>
+              <div class="mock-bs-item">
+                <div class="mock-bs-m">CMR — SEN</div>
+                <div class="mock-bs-p">CMR <span class="mock-bs-odd">3.80</span></div>
+              </div>
+              <hr class="mock-bs-sep"/>
+              <div class="mock-bs-row"><span data-i18n="mock.stake">Mise</span><span class="mock-bs-val">5 000 F</span></div>
+              <div class="mock-bs-row"><span data-i18n="mock.potWin">Gain pot.</span><span class="mock-bs-gain">43 320 F</span></div>
+              <button class="mock-bs-cta" data-i18n="mock.bet">PARIER</button>
+            </div>
+          </div>
+        </div>
+        <!-- Floating badges -->
+        <div class="mock-float mock-float-1">
+          <div class="float-icon fi-y">🏆</div>
+          <div>
+            <div class="float-title">+43 320 FCFA</div>
+            <div class="float-sub" data-i18n="mock.potentialWin">Gain potentiel</div>
+          </div>
+        </div>
+        <div class="mock-float mock-float-2">
+          <div class="float-icon fi-g">⚡</div>
+          <div>
+            <div class="float-title" data-i18n="mock.liveOdds">Cotes en direct</div>
+            <div class="float-sub" data-i18n="mock.realTime">Mis à jour en temps réel</div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ========== STATS (noir) ========== -->
+<div class="stats-bar" role="region" aria-label="Chiffres clés">
+  <div class="container">
+    <div class="stats-grid">
+      <div class="stat-item fade-in">
+        <div class="stat-value">30+</div>
+        <div class="stat-label" data-i18n="stats.sports">Sports disponibles</div>
+      </div>
+      <div class="stat-item fade-in" style="transition-delay:80ms">
+        <div class="stat-value">5 000+</div>
+        <div class="stat-label" data-i18n="stats.matches">Matchs chaque mois</div>
+      </div>
+      <div class="stat-item fade-in" style="transition-delay:160ms">
+        <div class="stat-value">24h</div>
+        <div class="stat-label" data-i18n="stats.withdrawal">Délai de retrait max</div>
+      </div>
+      <div class="stat-item fade-in" style="transition-delay:240ms">
+        <div class="stat-value">100%</div>
+        <div class="stat-label" data-i18n="stats.bonus">Bonus de bienvenue</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ========== FEATURES ========== -->
+<section class="features section" id="pourquoi" aria-labelledby="feat-title">
+  <div class="container">
+    <div class="sec-header fade-in">
+      <div class="sec-eyebrow ey-green">
+        ⭐
+        Pourquoi BetBox
+      </div>
+      <h2 class="sec-title" id="feat-title" data-i18n-html="feat.title">Une plateforme pensée<br/>pour le Cameroun</h2>
+      <p class="sec-desc sec-desc-sub" data-i18n="feat.desc">Simple, rapide et accessible depuis votre téléphone, conçue pour fonctionner partout au Cameroun, même avec une connexion mobile standard.</p>
+    </div>
+    <div class="features-grid">
+      <div class="feat-card fade-in">
+        <div class="feat-icon fi-green">⚽</div>
+        <h3 class="feat-title" data-i18n="feat.f1.title">Football local &amp; international</h3>
+        <p class="feat-desc" data-i18n="feat.f1.desc">Pariez sur la Ligue 1 Camerounaise, la Coupe du Cameroun, la CAN, la Premier League, La Liga et des centaines d'autres compétitions dans le monde entier.</p>
+      </div>
+      <div class="feat-card fade-in" style="transition-delay:60ms">
+        <div class="feat-icon fi-yellow">📱</div>
+        <h3 class="feat-title" data-i18n="feat.f2.title">Mobile avant tout</h3>
+        <p class="feat-desc" data-i18n="feat.f2.desc">Application optimisée pour tous les smartphones d'entrée de gamme. Pariez depuis Douala, Yaoundé ou partout au Cameroun, même avec un réseau mobile limité.</p>
+      </div>
+      <div class="feat-card fade-in" style="transition-delay:120ms">
+        <div class="feat-icon fi-dark">💳</div>
+        <h3 class="feat-title" data-i18n="feat.f3.title">Paiements en FCFA</h3>
+        <p class="feat-desc" data-i18n="feat.f3.desc">Dépôts et retraits en Francs CFA via Orange Money et MTN Mobile Money. Instantané, sans frais cachés, dès 500 FCFA. Retraits traités en moins de 24h.</p>
+      </div>
+      <div class="feat-card fade-in" style="transition-delay:180ms">
+        <div class="feat-icon fi-blue">📈</div>
+        <h3 class="feat-title" data-i18n="feat.f4.title">Meilleures cotes du marché</h3>
+        <p class="feat-desc" data-i18n="feat.f4.desc">Nos algorithmes analysent les marchés en continu pour vous offrir des cotes compétitives sur chaque compétition, chaque jour, sans exception.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ========== SPORTS (noir) ========== -->
+<section class="sports section" id="sports" aria-labelledby="sports-title">
+  <div class="container">
+    <div class="sec-header fade-in">
+      <div class="sec-eyebrow ey-white">
+        🔴
+        Disciplines
+      </div>
+      <h2 class="sec-title sec-title-white" id="sports-title" data-i18n="sports.title">30+ sports à portée de main</h2>
+      <p class="sec-desc sec-desc-white" data-i18n="sports.desc">Du football aux arts martiaux, pariez sur toutes les disciplines qui vous passionnent.</p>
+    </div>
+    <div class="sports-grid fade-in">
+      <div class="sport-pill hot">⚽ Football <span class="pill-badge" data-i18n="sports.popular">Populaire</span></div>
+      <div class="sport-pill hot">🌍 CAN 2025 <span class="pill-badge" data-i18n="sports.featured">Phare</span></div>
+      <div class="sport-pill">🏀 Basketball</div>
+      <div class="sport-pill">🎾 Tennis</div>
+      <div class="sport-pill">🏈 <span data-i18n="sports.american">Football américain</span></div>
+      <div class="sport-pill">🏒 <span data-i18n="sports.hockey">Hockey sur glace</span></div>
+      <div class="sport-pill">⚾ Baseball</div>
+      <div class="sport-pill">🥊 <span data-i18n="sports.boxing">Boxe &amp; MMA</span></div>
+      <div class="sport-pill">🏁 <span data-i18n="sports.f1">Formule 1</span></div>
+      <div class="sport-pill">🏐 Volleyball</div>
+      <div class="sport-pill">🎮 Esport</div>
+      <div class="sport-pill" style="border-style:dashed;opacity:.35;">
+        ➕ <span data-i18n="sports.more">20 autres sports</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ========== HOW IT WORKS ========== -->
+<section class="hiw section" id="comment" aria-labelledby="hiw-title">
+  <div class="container">
+    <div class="sec-header fade-in">
+      <div class="sec-eyebrow ey-green">
+        ⭐
+        En 3 étapes
+      </div>
+      <h2 class="sec-title" id="hiw-title" data-i18n="hiw.title">Prêt à parier en 5 minutes</h2>
+      <p class="sec-desc sec-desc-sub" data-i18n="hiw.desc">Créez votre compte, déposez en FCFA et commencez à parier sur vos matchs favoris en moins de 5 minutes.</p>
+    </div>
+    <div class="steps-grid">
+      <div class="step-card fade-in">
+        <div class="step-num" aria-label="Étape 1">1</div>
+        <h3 class="step-title" data-i18n="hiw.s1.title">Créez votre compte</h3>
+        <p class="step-desc" data-i18n="hiw.s1.desc">Inscrivez-vous en 2 minutes avec votre numéro de téléphone camerounais ou votre email. Simple et sans justificatif pour commencer.</p>
+      </div>
+      <div class="step-card fade-in" style="transition-delay:100ms">
+        <div class="step-num" aria-label="Étape 2">2</div>
+        <h3 class="step-title" data-i18n="hiw.s2.title">Déposez en FCFA</h3>
+        <p class="step-desc" data-i18n="hiw.s2.desc">Alimentez votre compte via Orange Money ou MTN MoMo. Dès 500 FCFA, vous pouvez commencer à parier sur vos sports favoris.</p>
+      </div>
+      <div class="step-card fade-in" style="transition-delay:200ms">
+        <div class="step-num" aria-label="Étape 3">3</div>
+        <h3 class="step-title" data-i18n="hiw.s3.title">Pariez et encaissez</h3>
+        <p class="step-desc" data-i18n="hiw.s3.desc">Choisissez vos matchs, validez votre ticket et recevez vos gains directement sur votre Orange Money ou MTN MoMo après le coup de sifflet final.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ========== PROMO (noir) ========== -->
+<section class="promo section" id="bonus" aria-labelledby="promo-title">
+  <div class="container">
+    <div class="promo-card fade-in">
+      <div class="promo-content">
+        <div class="promo-eyebrow">
+          🎁
+          Offre de bienvenue
+        </div>
+        <h2 class="promo-title" id="promo-title" data-i18n-html="promo.title">Votre 1ère mise<br/><span>remboursée à 100%</span></h2>
+        <p class="promo-desc" data-i18n="promo.desc">Ouvrez votre compte BetBox aujourd'hui et bénéficiez de notre offre de bienvenue. Si votre première mise ne gagne pas, nous vous la remboursons — jusqu'à 10 000 FCFA.</p>
+        <div class="promo-ctas">
+          <button class="btn btn-primary btn-lg" data-i18n="promo.cta">Réclamer mon bonus</button>
+          <button class="btn btn-outline-white" data-i18n="promo.more">En savoir plus</button>
+        </div>
+        <p class="promo-terms" data-i18n="promo.terms">* Offre soumise à conditions. Valable pour les nouveaux comptes uniquement.</p>
+      </div>
+      <div class="bonus-widget" aria-label="Bonus jusqu'à 10 000 FCFA">
+        <div class="bonus-amount">10K</div>
+        <div class="bonus-currency">FCFA</div>
+        <div class="bonus-label" data-i18n="promo.bonusLabel">Bonus offert</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ========== TESTIMONIALS (noir) ========== -->
+<section class="testimonials section" id="avis" aria-labelledby="testi-title">
+  <div class="container">
+    <div class="sec-header fade-in">
+      <div class="sec-eyebrow ey-white">
+        ❤️
+        Avis utilisateurs
+      </div>
+      <h2 class="sec-title sec-title-white" id="testi-title" data-i18n="testi.title">Ce que nos parieurs disent</h2>
+    </div>
+    <div class="testi-grid">
+      <div class="testi-card fade-in">
+        <div class="testi-stars" aria-label="5 étoiles sur 5">
+          <span class="star">&#9733;</span><span class="star">&#9733;</span><span class="star">&#9733;</span><span class="star">&#9733;</span><span class="star">&#9733;</span>
+        </div>
+        <p class="testi-text"><span data-i18n="testi.t1.text">"Enfin une plateforme de paris qui marche vraiment au Cameroun. Le retrait via Orange Money est arrivé en moins d'une heure. Interface claire, cotes excellentes, aucune complication."</span></p>
+        <div class="testi-author">
+          <div class="author-av" style="background:var(--green);">EM</div>
+          <div>
+            <div class="author-name">Emmanuel M.</div>
+            <div class="author-loc">Yaoundé &mdash; Football</div>
+          </div>
+        </div>
+      </div>
+      <div class="testi-card fade-in" style="transition-delay:80ms">
+        <div class="testi-stars" aria-label="5 étoiles sur 5">
+          <span class="star">&#9733;</span><span class="star">&#9733;</span><span class="star">&#9733;</span><span class="star">&#9733;</span><span class="star">&#9733;</span>
+        </div>
+        <p class="testi-text"><span data-i18n="testi.t2.text">"Les cotes sur la CAN sont imbattables. Je parie depuis mon téléphone sans aucun problème. J'ai reçu 45 000 FCFA directement sur MTN MoMo en moins de 20 minutes."</span></p>
+        <div class="testi-author">
+          <div class="author-av" style="background:#6d28d9;">CB</div>
+          <div>
+            <div class="author-name">Christelle B.</div><div class="author-loc" data-i18n="testi.t2.loc">Douala &mdash; Football</div>
+          </div>
+        </div>
+      </div>
+      <div class="testi-card fade-in" style="transition-delay:160ms">
+        <div class="testi-stars" aria-label="4 étoiles sur 5">
+          <span class="star">&#9733;</span><span class="star">&#9733;</span><span class="star">&#9733;</span><span class="star">&#9733;</span><span class="star-dim">&#9733;</span>
+        </div>
+        <p class="testi-text"><span data-i18n="testi.t3.text">"Le service client répond vite et en français. Le dépôt est instantané. Très bonne expérience depuis mon inscription, je recommande BetBox à mes proches."</span></p>
+        <div class="testi-author">
+          <div class="author-av" style="background:#ea580c;">JN</div>
+          <div>
+            <div class="author-name">Jean-Paul N.</div>
+            <div class="author-loc">Bafoussam &mdash; Basketball</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+</main>
+
+<!-- ========== FOOTER (noir) ========== -->
+<footer class="footer" role="contentinfo">
+  <div class="container">
+    <div class="footer-main">
+
+      <!-- Marque -->
+      <div class="footer-brand-col">
+        <div class="footer-logo">
+          <!-- Logo horizontal — version fond vert (texte blanc) -->
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 163.68 33.57" height="24" aria-hidden="true" focusable="false">
+            <defs><style>.fl1{fill:#e3b505}.fl2{fill:rgba(255,255,255,0.9)}.fl3{fill:#1e4530}</style></defs>
+            <path class="fl2" d="M68.88,25.71c0,1.37-.27,2.52-.81,3.45-.54.93-1.26,1.68-2.16,2.25s-1.92.97-3.06,1.22-2.32.37-3.52.37h-9.98V7.95h9.98c.97,0,1.96.1,2.97.3,1.01.2,1.93.54,2.76,1.03.82.48,1.5,1.14,2.02,1.96.52.83.78,1.87.78,3.15,0,1.39-.38,2.54-1.13,3.45s-1.75,1.56-2.97,1.96v.07c.71.12,1.37.34,2,.65.62.32,1.17.73,1.63,1.22.46.5.83,1.07,1.1,1.73.27.66.41,1.4.41,2.23ZM62.01,15.21c0-.85-.32-1.47-.97-1.86-.65-.39-1.61-.58-2.88-.58h-2.97v5.16h3.25c1.13,0,2.01-.23,2.64-.69.62-.46.94-1.14.94-2.03ZM62.83,25.15c0-1.04-.39-1.76-1.17-2.16-.78-.4-1.82-.6-3.11-.6h-3.36v5.73h3.4c.47,0,.96-.04,1.47-.12.51-.08.97-.23,1.38-.44.41-.21.75-.51,1.01-.9.26-.39.39-.89.39-1.5Z"/>
+            <path class="fl2" d="M88.62,24.4v.71c0,.24-.01.46-.04.67h-12.77c.05.5.19.94.44,1.34.25.4.57.75.96,1.04.39.3.83.53,1.31.69s.98.25,1.5.25c.92,0,1.7-.17,2.33-.51.64-.34,1.16-.78,1.56-1.33l4.03,2.55c-.83,1.2-1.92,2.13-3.27,2.78-1.36.65-2.93.97-4.72.97-1.32,0-2.57-.21-3.75-.62-1.18-.41-2.21-1.01-3.1-1.8-.88-.79-1.58-1.76-2.09-2.92-.51-1.16-.76-2.48-.76-3.96s.25-2.74.74-3.91c.5-1.17,1.17-2.16,2.02-2.97.85-.81,1.85-1.44,3.01-1.89,1.16-.45,2.41-.67,3.75-.67s2.49.22,3.57.65c1.08.44,2.02,1.07,2.79,1.89.78.83,1.39,1.83,1.82,3.01.44,1.18.65,2.52.65,4.03ZM83.28,22.17c0-.92-.29-1.71-.87-2.37-.58-.66-1.44-.99-2.6-.99-.57,0-1.09.09-1.56.27-.47.18-.88.42-1.24.73-.35.31-.64.67-.85,1.08-.21.41-.33.84-.35,1.29h7.46Z"/>
+            <path class="fl2" d="M97.11,19.7v6.75c0,.83.16,1.45.48,1.86.32.41.89.62,1.72.62.28,0,.58-.02.9-.07.32-.05.58-.12.8-.21l.07,4.25c-.4.14-.91.27-1.52.37-.61.11-1.23.16-1.84.16-1.18,0-2.17-.15-2.97-.44-.8-.3-1.44-.72-1.93-1.28-.48-.56-.83-1.22-1.04-1.99-.21-.77-.32-1.63-.32-2.57v-7.45h-2.83v-4.32h2.8v-4.63h5.7v4.63h4.14v4.32h-4.14Z"/>
+            <path class="fl2" d="M122.4,25.71c0,1.37-.27,2.52-.81,3.45-.54.93-1.26,1.68-2.16,2.25s-1.92.97-3.06,1.22-2.32.37-3.52.37h-9.98V7.95h9.98c.97,0,1.96.1,2.97.3,1.01.2,1.93.54,2.76,1.03.82.48,1.5,1.14,2.02,1.96.52.83.78,1.87.78,3.15,0,1.39-.38,2.54-1.13,3.45s-1.75,1.56-2.97,1.96v.07c.71.12,1.37.34,2,.65.62.32,1.17.73,1.63,1.22.46.5.83,1.07,1.1,1.73.27.66.41,1.4.41,2.23ZM115.54,15.21c0-.85-.32-1.47-.97-1.86-.65-.39-1.61-.58-2.88-.58h-2.97v5.16h3.25c1.13,0,2.01-.23,2.64-.69.62-.46.94-1.14.94-2.03ZM116.35,25.15c0-1.04-.39-1.76-1.17-2.16-.78-.4-1.82-.6-3.11-.6h-3.36v5.73h3.4c.47,0,.96-.04,1.47-.12.51-.08.97-.23,1.38-.44.41-.21.75-.51,1.01-.9.26-.39.39-.89.39-1.5Z"/>
+            <path class="fl2" d="M143.34,24.12c0,1.44-.26,2.74-.78,3.91-.52,1.17-1.23,2.16-2.12,2.97-.9.81-1.93,1.44-3.11,1.89-1.18.45-2.44.67-3.79.67s-2.58-.22-3.77-.67c-1.19-.45-2.23-1.08-3.11-1.89-.88-.81-1.59-1.8-2.1-2.97-.52-1.17-.78-2.47-.78-3.91s.26-2.74.78-3.89c.52-1.16,1.22-2.13,2.1-2.94.88-.8,1.92-1.41,3.11-1.84,1.19-.42,2.45-.64,3.77-.64s2.61.21,3.79.64,2.22,1.04,3.11,1.84c.9.8,1.6,1.78,2.12,2.94.52,1.16.78,2.45.78,3.89ZM137.75,24.12c0-.57-.09-1.12-.28-1.66-.19-.54-.46-1.02-.81-1.43-.35-.41-.79-.75-1.31-1.01-.52-.26-1.12-.39-1.8-.39s-1.29.13-1.8.39c-.52.26-.95.6-1.29,1.01-.34.41-.6.89-.78,1.43-.18.54-.27,1.1-.27,1.66s.09,1.12.27,1.66c.18.54.44,1.03.8,1.47.35.44.79.78,1.31,1.04.52.26,1.12.39,1.8.39s1.29-.13,1.8-.39c.52-.26.96-.61,1.31-1.04.35-.44.62-.93.8-1.47.18-.54.27-1.1.27-1.66Z"/>
+            <path class="fl2" d="M156.86,33l-3.79-5.41-3.89,5.41h-6.72l7.04-9.23-6.37-8.38h6.76l3.29,4.71,3.33-4.71h6.54l-6.33,8.38,6.97,9.23h-6.83Z"/>
+            <path class="fl3" d="M10.31,9.35h-1.66v-2.64h1.52c.65,0,1.14.1,1.47.3.33.2.5.52.5.95,0,.46-.16.8-.48,1.04-.32.23-.77.35-1.35.35Z"/>
+            <path class="fl3" d="M12.55,13.04c0,.31-.06.57-.2.77-.13.19-.3.35-.51.46-.21.11-.45.18-.71.22-.25.04-.5.07-.75.07h-1.73v-2.93h1.72c.66,0,1.19.1,1.59.31.39.2.59.57.59,1.1Z"/>
+            <path class="fl3" d="M0,0v21.31h21.31V0H0ZM15.23,15.09c-.28.47-.65.86-1.1,1.15-.46.29-.98.49-1.57.62-.58.13-1.18.19-1.8.19h-5.09V4.26h5.09c.5,0,1,.05,1.52.15.52.1.99.28,1.41.52.42.25.77.58,1.03,1.01.27.42.4.95.4,1.6,0,.72-.19,1.3-.58,1.77-.39.46-.89.79-1.52,1v.04c.36.06.7.17,1.02.33s.6.37.84.62c.23.26.42.55.56.89.13.34.2.72.2,1.14,0,.7-.14,1.28-.41,1.76Z"/>
+            <path class="fl1" d="M32.84,22.03h-1.66v-2.64h1.52c.65,0,1.14.1,1.47.3.33.2.5.51.5.95s-.16.8-.48,1.04c-.32.23-.77.35-1.35.35Z"/>
+            <path class="fl1" d="M35.08,25.71c0,.32-.06.57-.2.77-.13.2-.3.35-.51.46-.21.11-.45.19-.71.23-.25.04-.51.06-.75.06h-1.73v-2.93h1.72c.66,0,1.19.11,1.59.31.39.21.59.57.59,1.1Z"/>
+            <path class="fl1" d="M22.95,13.09v20.48h20.47V13.09h-20.47ZM37.76,27.77c-.28.47-.65.85-1.11,1.14-.45.29-.97.5-1.56.63-.58.12-1.18.19-1.8.19h-5.09v-12.8h5.09c.5,0,1,.05,1.52.16.52.1.99.27,1.41.52s.77.58,1.03,1c.27.42.4.96.4,1.61,0,.71-.19,1.3-.58,1.76-.39.47-.89.8-1.52,1.01v.03c.36.06.7.17,1.02.34.32.16.6.37.83.62.24.25.43.55.56.89.14.33.21.71.21,1.13,0,.7-.14,1.29-.41,1.77Z"/>
+          </svg>
+        </div>
+        <p class="footer-tagline" data-i18n="footer.tagline">La plateforme de paris sportifs pensée pour l'Afrique. Simple, sécurisée et adaptée à vos usages.</p>
+        <div class="footer-socials" aria-label="Réseaux sociaux">
+          <a href="#" class="social-btn" aria-label="Facebook"><i class="fa-brands fa-facebook-f"></i></a>
+          <a href="#" class="social-btn" aria-label="Instagram"><i class="fa-brands fa-instagram"></i></a>
+          <a href="#" class="social-btn" aria-label="X / Twitter"><i class="fa-brands fa-x-twitter"></i></a>
+        </div>
+      </div>
+
+      <!-- Liens rapides -->
+      <div>
+        <div class="footer-col-title" data-i18n="footer.nav">Navigation</div>
+        <ul class="footer-links">
+          <li><a href="#" data-i18n="nav.signup">S'inscrire</a></li>
+          <li><a href="#" data-i18n="nav.login">Se connecter</a></li>
+          <li><a href="#" data-i18n="nav.offersBonus">Offres &amp; Bonus</a></li>
+          <li><a href="#">FAQ</a></li>
+        </ul>
+      </div>
+
+      <!-- Legal / Support -->
+      <div>
+        <div class="footer-col-title" data-i18n="footer.info">Informations</div>
+        <ul class="footer-links">
+          <li><a href="betbox-about.html"       class="footer-link" data-i18n="footer.about">À propos</a></li>
+          <li><a href="betbox-responsible.html" class="footer-link" data-i18n="footer.responsible">Jeu responsable</a></li>
+          <li><a href="betbox-privacy.html"     class="footer-link" data-i18n="footer.privacy">Confidentialité</a></li>
+          <li><a href="betbox-cgu.html"         class="footer-link" data-i18n="footer.terms">Conditions générales</a></li>
+        </ul>
+      </div>
+
+    </div>
+
+    <div class="footer-bottom">
+      <div class="footer-copy"><span data-i18n="footer.copy">&copy; 2026 BetBox &mdash; Tous droits réservés</span></div>
+      <div class="footer-legal">
+        <a href="betbox-privacy.html" data-i18n="footer.privacyPolicy">Politique de confidentialité</a>
+        <a href="betbox-cgu.html"     data-i18n="footer.cgu">CGU</a>
+        <a href="#">Cookies</a>
+      </div>
+      <div style="display:flex;align-items:center;gap:8px;">
+        <div class="age-badge" aria-label="Interdit aux moins de 18 ans">18+</div>
+        <span style="font-size:11px;color:rgba(255,255,255,.25);" data-i18n="footer.responsible">Jeu responsable</span>
+      </div>
+    </div>
+    <p class="responsible" role="note" data-i18n="footer.legal">Les jeux d'argent comportent des risques : endettement, isolement, dépendance. Ne jouez que ce que vous pouvez vous permettre de perdre. Interdit aux moins de 18 ans.</p>
+  </div>
+</footer>
+
+<!-- ========== JS ========== -->
+<script>
+  // Scroll fade-in
+  const observer = new IntersectionObserver(
+    entries => entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('visible'); }),
+    { threshold: 0.1 }
+  );
+  document.querySelectorAll('.fade-in').forEach(el => observer.observe(el));
+
+  // Navbar shadow
+  const navbar = document.getElementById('navbar');
+  window.addEventListener('scroll', () => {
+    navbar.classList.toggle('scrolled', window.scrollY > 8);
+  }, { passive: true });
+
+  // Mobile Drawer
+  const burger  = document.getElementById('burgerBtn');
+  const drawer  = document.getElementById('mobileDrawer');
+  const overlay = document.getElementById('drawerOverlay');
+  const close   = document.getElementById('drawerClose');
+
+  function openDrawer() {
+    drawer.classList.add('open');
+    overlay.classList.add('open');
+    burger.classList.add('open');
+    burger.setAttribute('aria-expanded', 'true');
+    overlay.setAttribute('aria-hidden', 'false');
+    document.body.style.overflow = 'hidden';
+    drawer.querySelector('.drawer-nav-link')?.focus();
+  }
+  function closeDrawer() {
+    drawer.classList.remove('open');
+    overlay.classList.remove('open');
+    burger.classList.remove('open');
+    burger.setAttribute('aria-expanded', 'false');
+    overlay.setAttribute('aria-hidden', 'true');
+    document.body.style.overflow = '';
+    burger.focus();
+  }
+
+  burger.addEventListener('click', () => drawer.classList.contains('open') ? closeDrawer() : openDrawer());
+  close.addEventListener('click', closeDrawer);
+  overlay.addEventListener('click', closeDrawer);
+  document.addEventListener('keydown', e => { if (e.key === 'Escape' && drawer.classList.contains('open')) closeDrawer(); });
+  drawer.querySelectorAll('.drawer-nav-link').forEach(l => l.addEventListener('click', closeDrawer));
+</script>
+
+<script>
+/* ── i18n ── */
+const T = {
+  fr: {
+    "nav.sports":         "Sports",
+    "nav.how":            "Comment ça marche",
+    "nav.offers":         "Offres",
+    "nav.reviews":        "Avis",
+    "nav.offersBonus":    "Offres &amp; Bonus",
+    "nav.customerReviews":"Avis clients",
+    "nav.login":          "Se connecter",
+    "nav.signup":         "S'inscrire",
+    "cta.createAccount":  "Créer mon compte",
+    "cta.openAccount":    "Ouvrir mon compte →",
+    "cta.seeOdds":        "Voir les cotes",
+
+    "hero.badge":    "🟢 Disponible au Cameroun",
+    "hero.badgeSub": "Paris sportifs en ligne",
+    "hero.title":    "Pariez sur vos<br/>sports <span class='t-green'>préférés</span>,<br/><span class='t-yellow'>gagnez plus.</span>",
+    "hero.desc":     "BetBox vous offre les meilleures cotes sur la Ligue 1 Camerounaise, la CAN, la Premier League et plus de 30 autres sports — avec des retraits rapides via Orange Money et MTN MoMo.",
+    "hero.trust1":   "🔒 Sécurisé &amp; agréé",
+    "hero.trust2":   "💳 Orange Money &amp; MTN",
+    "hero.trust3":   "⚡ Retraits rapides",
+
+    "mock.myBet":       "Mon ticket",
+    "mock.stake":       "Mise",
+    "mock.potWin":      "Gain pot.",
+    "mock.bet":         "PARIER",
+    "mock.potentialWin":"Gain potentiel",
+    "mock.liveOdds":    "Cotes en direct",
+    "mock.realTime":    "Mis à jour en temps réel",
+
+    "stats.sports":     "Sports disponibles",
+    "stats.matches":    "Matchs chaque mois",
+    "stats.withdrawal": "Délai de retrait max",
+    "stats.bonus":      "Bonus de bienvenue",
+
+    "feat.eyebrow":   "⭐ Pourquoi BetBox",
+    "feat.title":     "Une plateforme pensée<br/>pour le Cameroun",
+    "feat.desc":      "Simple, rapide et accessible depuis votre téléphone, conçue pour fonctionner partout au Cameroun, même avec une connexion mobile standard.",
+    "feat.f1.title":  "Football local &amp; international",
+    "feat.f1.desc":   "Pariez sur la Ligue 1 Camerounaise, la Coupe du Cameroun, la CAN, la Premier League, La Liga et des centaines d'autres compétitions dans le monde entier.",
+    "feat.f2.title":  "Mobile avant tout",
+    "feat.f2.desc":   "Application optimisée pour tous les smartphones d'entrée de gamme. Pariez depuis Douala, Yaoundé ou partout au Cameroun, même avec un réseau mobile limité.",
+    "feat.f3.title":  "Paiements en FCFA",
+    "feat.f3.desc":   "Dépôts et retraits en Francs CFA via Orange Money et MTN Mobile Money. Instantané, sans frais cachés, dès 500 FCFA. Retraits traités en moins de 24h.",
+    "feat.f4.title":  "Meilleures cotes du marché",
+    "feat.f4.desc":   "Nos algorithmes analysent les marchés en continu pour vous offrir des cotes compétitives sur chaque compétition, chaque jour, sans exception.",
+
+    "sports.eyebrow":  "🔴 Disciplines",
+    "sports.title":    "30+ sports à portée de main",
+    "sports.desc":     "Du football aux arts martiaux, pariez sur toutes les disciplines qui vous passionnent.",
+    "sports.popular":  "Populaire",
+    "sports.featured": "Phare",
+    "sports.american": "Football américain",
+    "sports.hockey":   "Hockey sur glace",
+    "sports.boxing":   "Boxe &amp; MMA",
+    "sports.f1":       "Formule 1",
+    "sports.more":     "20 autres sports",
+
+    "hiw.eyebrow":  "⭐ En 3 étapes",
+    "hiw.title":    "Prêt à parier en 5 minutes",
+    "hiw.desc":     "Créez votre compte, déposez en FCFA et commencez à parier sur vos matchs favoris en moins de 5 minutes.",
+    "hiw.s1.title": "Créez votre compte",
+    "hiw.s1.desc":  "Inscrivez-vous en 2 minutes avec votre numéro de téléphone camerounais ou votre email. Simple et sans justificatif pour commencer.",
+    "hiw.s2.title": "Déposez en FCFA",
+    "hiw.s2.desc":  "Alimentez votre compte via Orange Money ou MTN MoMo. Dès 500 FCFA, vous pouvez commencer à parier sur vos sports favoris.",
+    "hiw.s3.title": "Pariez et encaissez",
+    "hiw.s3.desc":  "Choisissez vos matchs, validez votre ticket et recevez vos gains directement sur votre Orange Money ou MTN MoMo après le coup de sifflet final.",
+
+    "promo.eyebrow":    "🎁 Offre de bienvenue",
+    "promo.title":      "Votre 1ère mise<br/><span>remboursée à 100%</span>",
+    "promo.desc":       "Ouvrez votre compte BetBox aujourd'hui et bénéficiez de notre offre de bienvenue. Si votre première mise ne gagne pas, nous vous la remboursons — jusqu'à 10 000 FCFA.",
+    "promo.cta":        "Réclamer mon bonus",
+    "promo.more":       "En savoir plus",
+    "promo.terms":      "* Offre soumise à conditions. Valable pour les nouveaux comptes uniquement.",
+    "promo.bonusLabel": "Bonus offert",
+
+    "testi.eyebrow":  "❤️ Avis utilisateurs",
+    "testi.title":    "Ce que nos parieurs disent",
+    "testi.t1.text":  "\u201cEnfin une plateforme de paris qui marche vraiment au Cameroun. Le retrait via Orange Money est arriv\u00e9 en moins d\u2019une heure. Interface claire, cotes excellentes, aucune complication.\u201d",
+    "testi.t1.loc":   "Yaound\u00e9 &mdash; Football",
+    "testi.t2.text":  "\u201cLes cotes sur la CAN sont imbattables. Je parie depuis mon t\u00e9l\u00e9phone sans aucun probl\u00e8me. J\u2019ai re\u00e7u 45\u00a0000 FCFA directement sur MTN MoMo en moins de 20 minutes.\u201d",
+    "testi.t2.loc":   "Douala &mdash; Football",
+    "testi.t3.text":  "\u201cLe service client r\u00e9pond vite et en fran\u00e7ais. Le d\u00e9p\u00f4t est instantan\u00e9. Tr\u00e8s bonne exp\u00e9rience depuis mon inscription, je recommande BetBox \u00e0 mes proches.\u201d",
+    "testi.t3.loc":   "Bafoussam &mdash; Basketball",
+
+    "footer.tagline":      "La plateforme de paris sportifs pensée pour l'Afrique. Simple, sécurisée et adaptée à vos usages.",
+    "footer.nav":          "Navigation",
+    "footer.info":         "Informations",
+    "footer.about":        "À propos",
+    "footer.responsible":  "Jeu responsable",
+    "footer.privacy":      "Confidentialité",
+    "footer.terms":        "Conditions générales",
+    "footer.copy":         "&copy; 2026 BetBox &mdash; Tous droits réservés",
+    "footer.privacyPolicy":"Politique de confidentialité",
+    "footer.cgu":          "CGU",
+    "footer.legal":        "Les jeux d'argent comportent des risques : endettement, isolement, dépendance. Ne jouez que ce que vous pouvez vous permettre de perdre. Interdit aux moins de 18 ans.",
+  },
+  en: {
+    "nav.sports":         "Sports",
+    "nav.how":            "How it works",
+    "nav.offers":         "Offers",
+    "nav.reviews":        "Reviews",
+    "nav.offersBonus":    "Offers &amp; Bonus",
+    "nav.customerReviews":"Customer reviews",
+    "nav.login":          "Log in",
+    "nav.signup":         "Sign up",
+    "cta.createAccount":  "Create my account",
+    "cta.openAccount":    "Open my account →",
+    "cta.seeOdds":        "See the odds",
+
+    "hero.badge":    "🟢 Available in Cameroon",
+    "hero.badgeSub": "Online sports betting",
+    "hero.title":    "Bet on your<br/><span class='t-green'>favourite</span> sports,<br/><span class='t-yellow'>win more.</span>",
+    "hero.desc":     "BetBox offers the best odds on the AFCON, Champions League, Premier League and over 30 other sports — with fast payouts via Orange Money and MTN MoMo.",
+    "hero.trust1":   "🔒 Secure &amp; licensed",
+    "hero.trust2":   "💳 Orange Money &amp; MTN",
+    "hero.trust3":   "⚡ Fast withdrawals",
+
+    "mock.myBet":       "My bet slip",
+    "mock.stake":       "Stake",
+    "mock.potWin":      "Pot. win",
+    "mock.bet":         "BET",
+    "mock.potentialWin":"Potential win",
+    "mock.liveOdds":    "Live odds",
+    "mock.realTime":    "Updated in real time",
+
+    "stats.sports":     "Sports available",
+    "stats.matches":    "Matches every month",
+    "stats.withdrawal": "Max withdrawal time",
+    "stats.bonus":      "Welcome bonus",
+
+    "feat.eyebrow":   "⭐ Why BetBox",
+    "feat.title":     "A platform built<br/>for Cameroon",
+    "feat.desc":      "Simple, fast and accessible from your phone — built to work everywhere in Cameroon, even on a limited mobile connection.",
+    "feat.f1.title":  "Local &amp; international football",
+    "feat.f1.desc":   "Bet on the AFCON, Champions League, Premier League, La Liga, Bundesliga and hundreds of other competitions from around the world.",
+    "feat.f2.title":  "Mobile first",
+    "feat.f2.desc":   "Optimised for all entry-level smartphones. Bet from Douala, Yaoundé or anywhere in Cameroon, even on a limited mobile network.",
+    "feat.f3.title":  "Payments in FCFA",
+    "feat.f3.desc":   "Deposits and withdrawals in CFA Francs via Orange Money and MTN Mobile Money. Instant, no hidden fees, from 500 FCFA. Withdrawals processed within 24 hours.",
+    "feat.f4.title":  "Best odds on the market",
+    "feat.f4.desc":   "Our algorithms continuously analyse markets to offer you competitive odds on every competition, every day, without exception.",
+
+    "sports.eyebrow":  "🔴 Disciplines",
+    "sports.title":    "30+ sports at your fingertips",
+    "sports.desc":     "From football to martial arts, bet on every discipline you're passionate about.",
+    "sports.popular":  "Popular",
+    "sports.featured": "Featured",
+    "sports.american": "American football",
+    "sports.hockey":   "Ice hockey",
+    "sports.boxing":   "Boxing &amp; MMA",
+    "sports.f1":       "Formula 1",
+    "sports.more":     "20 more sports",
+
+    "hiw.eyebrow":  "⭐ In 3 steps",
+    "hiw.title":    "Ready to bet in 5 minutes",
+    "hiw.desc":     "Create your account, deposit in FCFA and start betting on your favourite matches in under 5 minutes.",
+    "hiw.s1.title": "Create your account",
+    "hiw.s1.desc":  "Sign up in 2 minutes with your Cameroonian phone number or email. Simple, no ID required to get started.",
+    "hiw.s2.title": "Deposit in FCFA",
+    "hiw.s2.desc":  "Fund your account via Orange Money or MTN MoMo. From just 500 FCFA, you can start betting on your favourite sports.",
+    "hiw.s3.title": "Bet and cash out",
+    "hiw.s3.desc":  "Choose your matches, confirm your bet slip and receive your winnings directly to your Orange Money or MTN MoMo after the final whistle.",
+
+    "promo.eyebrow":    "🎁 Welcome offer",
+    "promo.title":      "Your 1st bet<br/><span>refunded 100%</span>",
+    "promo.desc":       "Open your BetBox account today and take advantage of our welcome offer. If your first bet doesn't win, we'll refund it — up to 10,000 FCFA.",
+    "promo.cta":        "Claim my bonus",
+    "promo.more":       "Learn more",
+    "promo.terms":      "* Offer subject to terms and conditions. Valid for new accounts only.",
+    "promo.bonusLabel": "Bonus offered",
+
+    "testi.eyebrow":  "❤️ User reviews",
+    "testi.title":    "What our bettors say",
+    "testi.t1.text":  '"Finally a betting platform that really works in Cameroon. The Orange Money withdrawal arrived in under an hour. Clear interface, excellent odds, zero hassle."',
+    "testi.t1.loc":   "Yaoundé &mdash; Football",
+    "testi.t2.text":  '"The AFCON odds are unbeatable. I bet from my phone with no issues at all. I received 45,000 FCFA directly on MTN MoMo in under 20 minutes."',
+    "testi.t2.loc":   "Douala &mdash; Football",
+    "testi.t3.text":  '"Customer support responds quickly in English. Deposits are instant. Great experience since I signed up — I recommend BetBox to everyone."',
+    "testi.t3.loc":   "Bafoussam &mdash; Basketball",
+
+    "footer.tagline":      "The sports betting platform built for Africa. Simple, secure and tailored to your needs.",
+    "footer.nav":          "Navigation",
+    "footer.info":         "Information",
+    "footer.about":        "About us",
+    "footer.responsible":  "Responsible gambling",
+    "footer.privacy":      "Privacy",
+    "footer.terms":        "Terms &amp; conditions",
+    "footer.copy":         "&copy; 2026 BetBox &mdash; All rights reserved",
+    "footer.privacyPolicy":"Privacy policy",
+    "footer.cgu":          "Terms of use",
+    "footer.legal":        "Gambling involves risks: debt, isolation, addiction. Only gamble what you can afford to lose. 18+ only.",
+  }
+};
+
+function setLang(lang) {
+  document.documentElement.setAttribute('data-lang', lang);
+  document.documentElement.setAttribute('lang', lang);
+  document.getElementById('btnFR').classList.toggle('active', lang === 'fr');
+  document.getElementById('btnFR').setAttribute('aria-pressed', lang === 'fr');
+  document.getElementById('btnEN').classList.toggle('active', lang === 'en');
+  document.getElementById('btnEN').setAttribute('aria-pressed', lang === 'en');
+
+  const dict = T[lang];
+  // innerHTML elements (data-i18n-html)
+  document.querySelectorAll('[data-i18n-html]').forEach(el => {
+    const k = el.getAttribute('data-i18n-html');
+    if (dict[k] !== undefined) el.innerHTML = dict[k];
+  });
+  // text/innerHTML elements (data-i18n)
+  document.querySelectorAll('[data-i18n]').forEach(el => {
+    const k = el.getAttribute('data-i18n');
+    if (dict[k] !== undefined) el.innerHTML = dict[k];
+  });
+  // page title
+  if (lang === 'fr') document.title = 'BetBox — Paris Sportifs au Cameroun';
+  else document.title = 'BetBox — Online Sports Betting in Cameroon';
+}
+</script>
+
+</body>
+</html>
